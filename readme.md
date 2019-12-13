@@ -9,8 +9,13 @@
 
 ## Install
 1, Git clone https://github.com/tungsoi/lien_hiep_phu_nu.git
+
 2, Duplicate .env.example, then rename to .env
+
 3, Create database with name: lien_hiep_phu_nu, import newest sql file in folder /database/mysql/
+
 4, Run command line: composer update
+
 5, Run server: php artisan server // 128.0.0.1
+
 6, Open host on browser
