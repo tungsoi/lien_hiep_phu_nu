@@ -6,7 +6,7 @@ return [
     'logo-mini' => '<b>BB</b>',
     'bootstrap' => app_path('Admin/bootstrap.php'),
     'route' => [
-        'prefix' => env('ADMIN_ROUTE_PREFIX', ''),
+        'prefix' => env('ADMIN_ROUTE_PREFIX', 'admin'),
         'namespace' => 'App\\Admin\\Controllers',
         'middleware' => [
             'web',

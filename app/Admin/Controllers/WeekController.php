@@ -100,7 +100,15 @@ class WeekController extends Controller
         });
         $grid->user_id_created(trans('admin.user_created'))->display(function () {
             return $this->userCreated->name;
-        })->label();
+        });
+        $grid->status(trans('admin.status'))->display(function () {
+            switch ($this->status) {
+                case 0: return '<span class="label label-default">'.trans('admin.not_started').'</span>';
+                case 1: return '<span class="label label-success">'.trans('admin.running').'</span>';
+                case 2: return '<span class="label label-danger">'.trans('admin.stop').'</span>';
+            }
+        });
+
         $grid->created_at(trans('admin.created_at'))->display(function() {
             return date('H:i - d/m/Y', strtotime($this->created_at));
         });
@@ -311,17 +319,17 @@ class WeekController extends Controller
     }
 
     public function script() {
-    return <<<EOT
-    $( document ).ready(function() {
-        var content = $('.form-group').eq(6).find('.box-body').html();
-        if (content != undefined)
-        {
-            content = content.replace(/&lt;/g, '<');
-            content = content.replace(/&gt;/g, '>');
-            content = content.replace('&nbsp;', '');
-            $('.form-group').eq(6).find('.box-body').html(content);
-        }
-    });
+        return <<<EOT
+        $( document ).ready(function() {
+            var content = $('.form-group').eq(6).find('.box-body').html();
+            if (content != undefined)
+            {
+                content = content.replace(/&lt;/g, '<');
+                content = content.replace(/&gt;/g, '>');
+                content = content.replace('&nbsp;', '');
+                $('.form-group').eq(6).find('.box-body').html(content);
+            }
+        });
 
 EOT;
     }

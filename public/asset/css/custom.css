@@ -1,0 +1,79 @@
+/*============================================================================================*/
+/* Your custom styles below */
+/*============================================================================================*/
+.uppercase {
+    text-transform: uppercase;
+}
+.error {
+    color: red;
+    margin-top: 5px;
+}
+#content .category-box.question {
+    max-width: 70%;
+}
+#content .category-box h2 {
+    font-size: 22px;
+    font-weight: bold;
+}
+#content .category-box .btn.btn-form {
+    font-size: 16px;
+}
+.answer-active {
+    background-color: rgba(73,185,111,.3) !important;
+}
+
+#btn-submit {
+    background-color: #28a745 !important;
+    color: white !important;
+    border-color: #0080b3 !important;
+}
+.menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: #fcfcfc;
+    z-index: 200;
+    border-bottom: 1px solid #fa8d16;
+}
+.welcome .box {
+    height: auto !important;
+}
+#content .progress-marker, #content .wave {
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 0;
+    left: 0;
+    padding-top: 30%;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+}
+.menu .row {
+    height: 100%;
+    width: 20%;
+    float: right;
+    line-height: 40px;
+}
+.menu .row a{
+    padding-right: 2vw;
+    color: #434343 !important;
+    font-size: 14px !important;
+}
+.mg-t40 {
+    margin-top: 40px;
+}
+.h42 {
+    height: 42px !important;
+}
+.people_number {
+    font-size: 1.5rem !important;
+}
+.registed {
+    padding: 10px;
+    background: #0686d8;
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+}

@@ -20,7 +20,7 @@ class Week extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'date_start', 'date_end', 'user_id_created'];
+    protected $fillable = ['name', 'date_start', 'date_end', 'user_id_created', 'status'];
 
     /**
      * Undocumented function
