@@ -16,6 +16,7 @@ use Brazzer\Admin\Extensions\HasManyNested;
 use Illuminate\Http\Request;
 use DB;
 use App\Admin\Extensions\Show\QuestionHaveAnswer;
+use App\Models\MemberExam;
 
 class WeekController extends Controller
 {
@@ -88,6 +89,9 @@ class WeekController extends Controller
     {
         $grid = new Grid(new Week);
 
+        $grid->header(function ($query) {
+            return '<i><label>*SLTLD : </label> Số lượt trả lời đúng</i>';
+        });
         $grid->name(trans('admin.week_name'))->editable();
         $grid->date_start(trans('admin.date_start'))->display(function() {
             return date('H:i - d/m/Y', strtotime($this->date_start));
@@ -108,14 +112,17 @@ class WeekController extends Controller
                 case 2: return '<span class="label label-danger">'.trans('admin.stop').'</span>';
             }
         });
-
-        $grid->created_at(trans('admin.created_at'))->display(function() {
-            return date('H:i - d/m/Y', strtotime($this->created_at));
-        });
-
+        $grid->column('number_answers', 'Số lượt trả lời')->display(function () {
+            return $this->memberExam->count();
+        })->label('primary');
+        $grid->column('people_correct', 'Số người trả lời đúng')->display(function () {
+            return $this->countNumberUserCorrect($this->id);
+        })->label('success');
         $grid->disableExport(false);
         $grid->actions(function ($grid) {
             $grid->disableDelete(false);
+            $route = route('weeks.answers', $grid->getKey());
+            $grid->prepend('<a href="'.$route.'" data-toggle="tooltip" title="Danh sách câu trả lời"><i class="fa fa-slack" aria-hidden="true"></i></a>');
         });
 
         return $grid;
@@ -171,6 +178,7 @@ class WeekController extends Controller
         $form->text('name', 'Tên tuần thi');
         $form->datetime('date_start', 'Ngày bắt đầu');
         $form->datetime('date_end', 'Ngày kết thúc');
+        $form->select('status', 'Trạng thái')->options([0 => 'Chưa diễn ra', 1 => 'Đang diễn ra', 2 => 'Đã kết thúc']);
         $form->hidden('user_id_created')->default(Admin::user()->id);
 
         $form->divider('Danh sách câu hỏi');
@@ -244,7 +252,8 @@ class WeekController extends Controller
                 'name'              =>  $request->name,
                 'date_start'        =>  $request->date_start,
                 'date_end'          =>  $request->date_end,
-                'user_id_created'   =>  $request->user_id_created
+                'user_id_created'   =>  $request->user_id_created,
+                'status'            =>  $request->status
             ]);
 
             if (isset($request->questions)) {
@@ -315,7 +324,7 @@ class WeekController extends Controller
         }
 
         admin_toastr(trans('admin.save_succeeded'), 'success');
-        return redirect()->back();
+        return redirect()->route('weeks.index');
     }
 
     public function script() {
@@ -332,5 +341,52 @@ class WeekController extends Controller
         });
 
 EOT;
+    }
+
+    public function answers($id, Content $content) {
+        return $content
+        ->header('Tuần thi trắc nghiệm')
+        ->description('Danh sách câu trả lời')
+        ->body($this->gridAnswers($id));
+    }
+
+     /**
+     * Make a grid builder.
+     *
+     * @return Grid
+     */
+    protected function gridAnswers($id)
+    {
+        $grid = new Grid(new MemberExam);
+        $grid->model()->where('week_id', $id);
+        $grid->header(function ($query) use ($id) {
+
+            $number = Week::countNumberUserCorrect($id);
+            return '<i style="color: red">*Số người trả lời đúng câu hỏi : <label> '.$number.'</label></i>';
+        });
+        $grid->column('member_name', 'Tên')->display(function () {
+            return $this->member->name;
+        });
+        $grid->answer('Câu trả lời')->display(function() {
+            if (!is_null($this->answer)) {
+
+                $answer = json_decode($this->answer);
+                $html = "";
+                foreach ($answer as $key => $element) {
+                    $html .= "Câu hỏi: $key - Đáp án: $element->answer_correct<br>";
+                }
+                return $html;
+            }
+
+            return null;
+        });
+        $grid->people_number('Dự đoán số người trả lời đúng');
+        $grid->disableCreateButton();
+        $grid->actions(function ($grid) {
+            $grid->disableView();
+            $grid->disableEdit();
+        });
+
+        return $grid;
     }
 }

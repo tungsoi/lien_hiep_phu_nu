@@ -37,6 +37,7 @@ Route::group([
 ], function (Router $router) {
 
     $router->get('/', 'HomeController@index')->name('admin.home');
+    $router->get('weeks/{id}/answers', 'WeekController@answers')->name('weeks.answers');
 
     $router->resources([
         'weeks' =>  'WeekController',

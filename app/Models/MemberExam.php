@@ -19,4 +19,13 @@ class MemberExam extends Model
      * @var array
      */
     protected $fillable = ['member_id', 'week_id', 'answer', 'people_number'];
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function member() {
+        return $this->hasOne('App\Models\Member', 'id', 'member_id');
+    }
 }
