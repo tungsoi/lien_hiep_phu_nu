@@ -5,7 +5,10 @@
     <form id="wrapped" class="form-horizontal" role="form" method="POST" action="{{ route('member.postLogin') }}">
         <div id="middle-wizard">
             <div class="step">
-                <center><h3 class="main_question uppercase">{{ trans('admin.login') }}</h3></center><hr>
+                <center>
+                    <h2 class="uppercase bold">{{ trans('admin.login') }}</h2>
+                </center>
+                <hr>
                 {{ csrf_field() }}
 
                 @if (isset($errors) && $errors->has('registed'))

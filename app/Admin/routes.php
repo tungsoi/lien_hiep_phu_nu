@@ -38,10 +38,13 @@ Route::group([
 
     $router->get('/', 'HomeController@index')->name('admin.home');
     $router->get('weeks/{id}/answers', 'WeekController@answers')->name('weeks.answers');
+    $router->get('weeks/{id}/prizes', 'WeekController@prizes')->name('weeks.prizes');
+    $router->get('weeks/export', 'WeekController@export')->name('weeks.export');
 
     $router->resources([
         'weeks' =>  'WeekController',
-        'members' =>  'MemberController'
+        'members' =>  'MemberController',
+        'prizes' =>  'PrizeController',
     ]);
 });
 

@@ -1,7 +1,6 @@
 @extends('member.master')
 
 @section('style')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.css">
 @endsection
 
 @section('content')
@@ -9,7 +8,7 @@
     <form id="wrapped" class="form-horizontal" role="form" method="POST" action="{{ route('member.postRegister') }}">
         <div id="middle-wizard">
             <div class="step">
-                <center><h3 class="main_question uppercase">{{ trans('admin.register') }}</h3></center><hr>
+                <center><h2 class="main_question uppercase bold">Đăng ký tài khoản</h2></center><hr>
                 {{ csrf_field() }}
 
                 <div class="form-group{{ isset($errors) && $errors->has('name') ? ' has-error' : '' }}">
@@ -64,6 +63,17 @@
                         </span>
                     @endif
                 </div>
+
+                <div class="form-group{{ isset($errors) && $errors->has('re-password') ? ' has-error' : '' }}">
+                    <label for="re-password" class="control-label">{{ trans('admin.re-password') }}</label>
+                    <input id="re_password" type="password" class="form-control" name="re_password" placeholder="{{ trans('admin.place_holder_re_password') }}">
+
+                    @if (isset($errors) && $errors->has('re-password'))
+                        <span class="help-block">
+                            <strong>{{ isset($errors) ? $errors->first('re-password') : '' }}</strong>
+                        </span>
+                    @endif
+                </div>
             </div>
         </div>
 
@@ -87,7 +97,7 @@
 @endsection
 
 @section('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.js"></script>
+<script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 <script>
     $(document).ready(function() {
         $("#wrapped").validate({
@@ -95,18 +105,52 @@
                 name: "required",
                 mobile_phone: "required",
                 password: "required",
-                birthday: "required"
+                birthday: "required",
+                re_password : {
+                    equalTo : "#password"
+                }
             },
             messages: {
                 name: '{{ trans('admin.place_holder_name') }}',
                 password: '{{ trans('admin.place_holder_password') }}',
                 mobile_phone: '{{ trans('admin.place_holder_mobile_phone') }}',
                 birthday: '{{ trans('admin.place_holder_birthday') }}',
+                re_password: "Mật khẩu không giống nhau"
             }
         });
 
+        jQuery(function ($)
+        {
+        $.datepicker.regional["vi-VN"] =
+            {
+                closeText: "Đóng",
+                prevText: "Trước",
+                nextText: "Sau",
+                currentText: "Hôm nay",
+                monthNames: ["Tháng một", "Tháng hai", "Tháng ba", "Tháng tư", "Tháng năm", "Tháng sáu", "Tháng bảy", "Tháng tám", "Tháng chín", "Tháng mười", "Tháng mười một", "Tháng mười hai"],
+                monthNamesShort: ["Một", "Hai", "Ba", "Bốn", "Năm", "Sáu", "Bảy", "Tám", "Chín", "Mười", "Mười một", "Mười hai"],
+                dayNames: ["Chủ nhật", "Thứ hai", "Thứ ba", "Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy"],
+                dayNamesShort: ["CN", "Hai", "Ba", "Tư", "Năm", "Sáu", "Bảy"],
+                dayNamesMin: ["CN", "T2", "T3", "T4", "T5", "T6", "T7"],
+                weekHeader: "Tuần",
+                dateFormat: "dd/mm/yy",
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: ""
+            };
+
+            $.datepicker.setDefaults($.datepicker.regional["vi-VN"]);
+        });
+
         $('.birthday').datepicker({
-            format: 'yyyy-mm-dd'
+            format: 'yyyy-mm-dd',
+            language: 'vi-VN',
+            isRTL: false,
+            autoclose:true,
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '1945:'+(new Date).getFullYear()
         });
 
     });

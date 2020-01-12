@@ -1,22 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    @include('member.header')
 
-    <title>{{ config('admin.name') }}</title>
-    <link rel="shortcut icon" href="{{ asset('asset/img/fabicon.png')}}" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,500,600" rel="stylesheet">
     <link href="{{ asset('asset/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('asset/css/menu.css')}}" rel="stylesheet">
     <link href="{{ asset('asset/css/style.css')}}" rel="stylesheet">
     <link href="{{ asset('asset/css/vendors.css')}}" rel="stylesheet">
     <link href="{{ asset('asset/css/custom.css')}}" rel="stylesheet">
-
-    @yield('style')
     <script src="{{ asset('asset/js/modernizr.js')}}"></script>
-
+    <link rel="stylesheet" href="{{ asset('asset/css/bootstrap-datepicker3.css')}}">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 
 <body>
@@ -24,37 +18,23 @@
 		<div class="row row-height">
 			<div class="col-lg-6 content-left">
 				<div class="content-left-wrapper">
-                    <a href="index.html" id="logo"><img src="{{ asset('asset/img/logo.png')}}" alt="" width="49" height="35"></a>
-					<div id="social">
-						<ul>
-							<li><a href="#0"><i class="icon-facebook"></i></a></li>
-							<li><a href="#0"><i class="icon-twitter"></i></a></li>
-							<li><a href="#0"><i class="icon-google"></i></a></li>
-							<li><a href="#0"><i class="icon-linkedin"></i></a></li>
-						</ul>
-					</div>
-					<!-- /social -->
+                    <a href="/" id="logo"><img src="{{ asset('asset/img/logo-default.png')}}" alt="" width="300" height="auto"></a>
 					<div>
                         <figure><img src="{{ asset('asset/img/info_graphic_1.svg')}}" alt="" class="img-fluid"></figure>
-                        <h2>{{ config('admin.name') }}</h2>
-						<p>Hướng tới kỷ niệm 90 năm ngày thành lập Hội LHPN Việt Nam, (20/10/1930 - 20/10/2020), góp phần tuyên truyền cho thế hệ trẻ và toàn thể nhân dân về vai trò của Phụ nữ và đóng góp của Hội trong 90 năm qua</p>
-						<a href="https://google.com" class="btn_1 rounded" target="_blank">TRANG CHỦ</a>
+                        <h2 class="master-title">HỘI LIÊN HIỆP PHỤ NỮ VIỆT NAM</h2>
+						<p class="master-desciption">VIET NAM WOMEN'S UNION</p>
+						<a href="http://vwu.vn/" class="btn_1 rounded" target="_blank">TRANG CHỦ</a>
 					</div>
-					<div class="copy">© 2018 Wilio</div>
+					<div class="copy">© Bản quyền thuộc về Hội Liên hiệp Phụ nữ Việt Nam</div>
 				</div>
-				<!-- /content-left-wrapper -->
 			</div>
-			<!-- /content-left -->
 
 			<div class="col-lg-6 content-right" id="start">
                 @yield('content')
 			</div>
-			<!-- /content-right-->
 		</div>
-		<!-- /row-->
 	</div>
 
-	<!-- COMMON SCRIPTS -->
     <script src="{{ asset('asset/js/jquery-3.2.1.min.js')}}"></script>
     <script src="{{ asset('asset/js/common_scripts.min.js')}}"></script>
 	<script src="{{ asset('asset/js/velocity.min.js')}}"></script>

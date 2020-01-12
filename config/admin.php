@@ -14,7 +14,7 @@ return [
         ],
     ],
     'directory' => app_path('Admin'),
-    'title' => env('APP_NAME'),
+    'title' => env('APP_TITLE'),
     'https' => env('ADMIN_HTTPS', false),
     'auth' => [
         'controller' => Brazzer\Admin\Controllers\AuthController::class,

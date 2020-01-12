@@ -14,6 +14,7 @@ use Brazzer\Admin\Grid;
 use Brazzer\Admin\Layout\Content;
 use Brazzer\Admin\Show;
 use App\Models\Member;
+use App\Admin\Services\WeekService;
 
 use function GuzzleHttp\json_encode;
 
@@ -38,8 +39,10 @@ class MemberController extends Controller
     public function storeExam(Request $r) {
         $data = $r->all();
         $data['answer'] = json_encode($data['question']);
+        $data['result'] = WeekService::checkResultAnswer($data['question']);
         MemberExam::create($data);
 
+        session()->flash('send-exam', 'Gửi câu trả lời thành công');
         return redirect()->route('member.dashboard');
     }
 

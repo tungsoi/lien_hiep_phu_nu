@@ -57,49 +57,11 @@ class Week extends Model
      * @param [type] $id
      * @return int
      */
-    public static function countNumberUserCorrect($id) {
+    public static function countNumberUserCorrect($weekId) {
+        return MemberExam::where('week_id', $weekId)->where('result', 1)->count();
+    }
 
-        $members = MemberExam::select('member_id')->groupBy('member_id')->get()->toArray();
-        if (!is_null($members)) {
-            $number_people_correct = 0;
-
-            // danh sach id nguoi tra loi
-            foreach ($members as $member) {
-                $member_id = $member['member_id'];
-
-                // cau tra loi cuoi cung
-                $answer_obj = MemberExam::select('answer')->where('member_id', $member_id)->where('week_id', $id)->orderBy('created_at', 'desc')->first();
-
-                if (!is_null($answer_obj)) {
-                    $answer = $answer_obj->toArray();
-
-                    // dap an tra loi
-                    $collection = json_decode($answer['answer']);
-                    $flag = false;
-
-                    // check cac dap an tra loi
-                    foreach ($collection as $question_id => $answer_id) {
-                        $answer_correct_db = Answer::where('question_id', $question_id)->where('is_correct', 1)->first();
-
-                        // so sanh id cau tra loi trong db va ca tra loi cua khach
-                        if ((int) $answer_correct_db->id == (int) $answer_id->answer_correct) { // dung
-                            $flag = true;
-                        } else { // sai
-                            $flag = false;
-                            break;
-                        }
-                    }
-
-                    // check flag
-                    if ($flag) {
-                        $number_people_correct++;
-                    }
-                }
-            }
-
-            return $number_people_correct;
-        }
-
-        return 0;
+    public function prizes() {
+        return $this->hasMany('App\Models\WeekPrize', 'week_id', 'id');
     }
 }

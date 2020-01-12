@@ -136,7 +136,10 @@ class MemberAuthController extends Controller {
                 ]);
             }
 
-            Member::create($request->all());
+            $data = $request->all();
+            $data['password'] = bcrypt($data['password']);
+            Member::create($data);
+
             return redirect()->route('member.login')->withInput()->withErrors([
                 'registed' => trans('admin.register-successed')
             ]);

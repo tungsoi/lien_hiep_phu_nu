@@ -11,9 +11,9 @@
                     <td style="width: 50%; @if ($answer->is_correct == 1) font-weight: bold; @endif" >{{ $answer->content}}</td>
                     <td style="width: 10%" align="center">
                         @if ($answer->is_correct == 1)
-                            <i class="fa fa-check" aria-hidden="true" style="color: red"></i>
+                            <i class="fa fa-check" aria-hidden="true" style="color: green"></i>
                         @else
-                            <i class="fa fa-times" aria-hidden="true" style="color: gray"></i>
+                            {{-- <i class="fa fa-times" aria-hidden="true" style="color: gray"></i> --}}
                         @endif
                     </td>
                 </tr>

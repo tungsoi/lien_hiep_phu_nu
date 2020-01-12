@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMemberExamsTable extends Migration
+class CreatePrizesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,11 @@ class CreateMemberExamsTable extends Migration
      */
     public function up()
     {
-        Schema::create('member_exams', function (Blueprint $table) {
+        Schema::create('prizes', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('member_id')->nullable();
-            $table->integer('week_id')->nullable();
-            $table->text('answer')->nullable();
-            $table->string('people_number')->nullable();
-            $table->string('result')->default('false');
+            $table->string('content')->nullable();
+            $table->integer('level')->default(4)->comment('1: giai nhat, 2: giai nhi, 3: giai ba, 4: khuyen khich');
+            $table->integer('number')->default(0)->comment('So luong giai trong 1 tuan');
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ class CreateMemberExamsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('member_exams');
+        Schema::dropIfExists('prizes');
     }
 }

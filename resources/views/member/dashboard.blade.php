@@ -1,63 +1,69 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <title>{{ config('admin.name') }}</title>
+<head>
+    @include ('member.header')
 
-        <meta charset="utf-8">
-        <meta name="csrf-token" content="">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="shortcut icon" href="{{ asset('asset/img/fabicon.png')}}" type="image/x-icon">
-
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Oswald:300,400" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,300,400,600" rel="stylesheet">
-
-        <link rel="stylesheet" href="{{ asset('asset/css/dashboard.css') }}">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <link rel="stylesheet" href="{{ asset('asset/css/custom.css') }}">
-    </head>
-    <body>
-        <div id="app">
-            <div class="layout">
-                <div class="menu">
-                    <div class="row">
-                        <a><i class="fa fa-user" aria-hidden="true"></i> &nbsp;{{ $member->name }}</a>
-                        <a href="{{ route('member.getLogout') }}"><i class="fa fa-sign-out" aria-hidden="true"></i> {{ trans('admin.logout') }}</a>
-                    </div>
+    <link rel="stylesheet" href="{{ asset('asset/css/dashboard.css') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ asset('asset/css/custom.css') }}">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+</head>
+<body>
+    <div id="app">
+        <div class="layout">
+            <div class="menu">
+                <div class="row">
+                    <a><i class="fa fa-user" aria-hidden="true"></i> &nbsp;{{ $member->name }}</a>
+                    <a href="{{ route('member.getLogout') }}"><i class="fa fa-sign-out" aria-hidden="true"></i> {{ trans('admin.logout') }}</a>
                 </div>
-                <main>
-                    <div id="content" class="white">
-                        <div class="content-container">
-                            <div class="welcome">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="box">
-                                            <br> <br>
-                                            <div><img src="asset/img/logo.png" alt="Liftmap" class="logo"></div>
-                                            <h1>Cuộc thi trắc nghiệm "Tìm hiểu 90 năm lịch sử Hội LHPN Việt Nam”</h1>
-                                            <p>Mỗi tuần, Ban Tổ chức Cuộc thi đưa ra 08 câu hỏi thi trắc nghiệm về nội dung tìm hiểu lịch sử 90 năm Hội LHPN Việt Nam; đóng góp của phụ nữ trong công cuộc đổi mới Đất nước (trong đó có 01 đáp án đúng) và 01 câu dự đoán số người trả lời.</p>
-                                            <h3>Thời gian tổ chức:</h3>
-                                            <p>- Thời gian thi trắc nghiệm được tiến hành hàng tuần, bắt đầu tuần thi thứ nhất từ ngày 08/03/2020 và kết thúc vào ngày 08/07/2019 (4 tháng).</p>
-                                            <p>- Thời gian thi mỗi tuần được tính từ 10h00’ thứ hai hằng tuần và kết thúc vào 9h00’ thứ hai tuần kế tiếp.</p>
-                                            <p>- Mỗi người có thể dự thi nhiều lần/tuần, tuy nhiên chỉ được công nhận 01 kết quả đúng nhất và có thời gian trả lời sớm nhất trong số các lần dự thi.</p>
-                                            <h3>Tuần thi đang diễn ra: {{ date('H:i - d/m/Y', strtotime($week->date_start)) .' đến '. date('H:i - d/m/Y', strtotime($week->date_end))  }}</h3>
-                                            <a class="btn btn-primary uppercase h42" href="{{ route('member.exam', $week->id) }}">Tham gia thi</a>
-                                            <br> <br><br> <br><br> <br><br> <br>
-                                            <div class="wave wave-1"></div>
-                                            <div class="wave wave-2"></div>
-                                        </div>
+            </div>
+            <main>
+                <div id="content" class="white bg-content">
+                    <div class="content-container">
+                        <div class="welcome">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="box">
+                                        <br> <br>
+                                        <div><img src="{{ asset('asset/img/logo-default.png') }}" alt="Liftmap" class="" width="300" height="auto"></div>
+                                        <h1>Cuộc thi trắc nghiệm "Tìm hiểu 90 năm lịch sử Hội LHPN Việt Nam”</h1>
+                                        <br>
+                                        <h3>* Mục đích cuộc thi:</h3>
+                                        <p>- Hướng tới kỷ niệm 90 năm ngày thành lập Hội LHPN Việt Nam, (20/10/1930 - 20/10/2020), góp phần tuyên truyền cho thế hệ trẻ và toàn thể nhân dân về vai trò của Phụ nữ và đóng góp của Hội trong 90 năm qua.</p>
+                                        <p>- Tiếp tục phát huy truyền thống lịch sử và những bài học kinh nghiệm quý báu của phong trào phụ nữ được hun đúc nên từ truyền thống cách mạng vẻ vang; vận dụng linh hoạt, sáng tạo, hiệu quả vào công cuộc đổi mới, hội nhập quốc tế hiện nay.</p>
+                                        <p>- Biểu dương, khen thưởng các cá nhân trả lời đúng và đầy đủ các tuần.</p>
+
+                                        <br>
+                                        <h3>* Giải thưởng cuộc thi:</h3>
+                                        <p>Mỗi tuần có 04 giải thưởng, bao gồm: </p>
+                                        <p>- 01 giải Nhất: Trị giá <b>5.000.000 đồng</b>.</p>
+                                        <p>- 02 giải Nhì: Mỗi giải trị giá <b>3.000.000 đồng</b>.</p>
+                                        <p>- 03 giải Ba: Mỗi giải trị giá <b>2.000.000 đồng</b>.</p>
+                                        <p>- 05 giải Khuyến khích: Mỗi giải trị giá <b>1.000.000 đồng</b>.</p>
+                                        <p><i>(Người nhận giải thưởng có trách nhiệm nộp thuế thu nhập cá nhân theo quy định)</i></p>
+
+                                        <br>
+                                        <h2>Tuần thi đang diễn ra: {{ date('H:i - d/m/Y', strtotime($week->date_start)) .' đến '. date('H:i - d/m/Y', strtotime($week->date_end))  }}</h2>
+                                        <a class="btn btn-primary uppercase h42" href="{{ route('member.exam', $week->id) }}">Tham gia thi</a>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-                    </div>
-                </main>
-            </div>
-        </div>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    </body>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    @if (session()->has('send-exam'))
+        <script>
+            toastr["success"]("Gửi câu trả lời thành công");
+        </script>
+    @endif
+</body>
 </html>

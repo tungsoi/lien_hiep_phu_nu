@@ -154,5 +154,7 @@ return [
     'place_holder_name' =>  'Vui lòng nhập họ và tên',
     'birthday'  =>  'Ngày sinh',
     'place_holder_birthday' =>  'Vui lòng chọn ngày sinh',
-    'register-successed'    =>  'Đăng ký thành công'
+    'register-successed'    =>  'Đăng ký thành công',
+    're-password'   =>  'Nhập lại mật khẩu',
+    'place_holder_re_password' =>  'Vui lòng nhập lại mật khẩu',
 ];

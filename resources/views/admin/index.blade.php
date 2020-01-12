@@ -7,9 +7,8 @@
     <title>{{ Admin::title() }} @if(isset($header)) | {{ $header }}@endif</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    @if(!is_null($favicon = Admin::favicon()))
-        <link rel="shortcut icon" href="{{$favicon}}">
-    @endif
+    <link rel="shortcut icon" href="{{ asset('asset/img/fabicon.ico')}}" type="image/x-icon">
+
     {!! Admin::css() !!}
     <script src="{{ Admin::jQuery() }}"></script>
     {!! Admin::headerJs() !!}
@@ -27,6 +26,12 @@
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
         })(window,document,'script','dataLayer','GTM-MN32CN8');</script>
     <!-- End Google Tag Manager -->
+
+    <style>
+        .cursor-pointer {
+            cursor: pointer !important;
+        }
+    </style>
 </head>
 <body class="hold-transition {{config('admin.skin')}} ">
 

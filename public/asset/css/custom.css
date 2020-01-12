@@ -77,3 +77,23 @@
     text-align: center;
     border-radius: 5px;
 }
+.cursor-pointer {
+    cursor: pointer !important;
+}
+.master-title {
+    color: #fcd602 !important;
+}
+.master-desciption {
+    font-weight: bold;
+    font-size: 20px !important;
+}
+.bold {
+    font-weight: bold !important;
+}
+.bg-content {
+    background-image: url('../img/bg-content.png') !important;
+    background-size: cover !important;
+}
+.tx-center {
+    text-align: center;
+}

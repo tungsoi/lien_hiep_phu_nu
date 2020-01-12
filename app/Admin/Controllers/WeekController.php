@@ -17,23 +17,30 @@ use Illuminate\Http\Request;
 use DB;
 use App\Admin\Extensions\Show\QuestionHaveAnswer;
 use App\Models\MemberExam;
+use App\Admin\Extensions\Export\WeeksExport;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Models\WeekPrize;
+use App\Models\Prize;
+use App\Admin\Services\WeekService;
 
-class WeekController extends Controller
-{
+class WeekController extends Controller {
     use HasResourceActions;
 
+    protected $fileExportName;
+    private $service;
+
+    public function __construct() {
+        $this->fileExportName = date('d-m-Y', strtotime(now()))."-weeks.xlsx";
+        $this->service = new WeekService();
+    }
     /**
      * Index interface.
      *
      * @param Content $content
      * @return Content
      */
-    public function index(Content $content)
-    {
-        return $content
-            ->header('Tuần thi trắc nghiệm')
-            ->description('Danh sách')
-            ->body($this->grid());
+    public function index(Content $content) {
+        return $content->header('Tuần thi trắc nghiệm')->description('Danh sách')->body($this->grid());
     }
 
     /**
@@ -43,12 +50,8 @@ class WeekController extends Controller
      * @param Content $content
      * @return Content
      */
-    public function show($id, Content $content)
-    {
-        return $content
-            ->header('Tuần thi trắc nghiệm')
-            ->description('Chi tiết')
-            ->body($this->detail($id));
+    public function show($id, Content $content) {
+        return $content->header('Tuần thi trắc nghiệm')->description('Chi tiết')->body($this->detail($id));
     }
 
     /**
@@ -58,12 +61,8 @@ class WeekController extends Controller
      * @param Content $content
      * @return Content
      */
-    public function edit($id, Content $content)
-    {
-        return $content
-            ->header('Tuần thi trắc nghiệm')
-            ->description('Chỉnh sửa')
-            ->body($this->form()->edit($id));
+    public function edit($id, Content $content) {
+        return $content->header('Tuần thi trắc nghiệm')->description('Chỉnh sửa')->body($this->form()->edit($id));
     }
 
     /**
@@ -72,12 +71,8 @@ class WeekController extends Controller
      * @param Content $content
      * @return Content
      */
-    public function create(Content $content)
-    {
-        return $content
-            ->header('Tuần thi trắc nghiệm')
-            ->description('Tạo mới')
-            ->body($this->form());
+    public function create(Content $content) {
+        return $content->header('Tuần thi trắc nghiệm')->description('Tạo mới')->body($this->form());
     }
 
     /**
@@ -85,14 +80,17 @@ class WeekController extends Controller
      *
      * @return Grid
      */
-    protected function grid()
-    {
+    protected function grid() {
         $grid = new Grid(new Week);
-
-        $grid->header(function ($query) {
-            return '<i><label>*SLTLD : </label> Số lượt trả lời đúng</i>';
+        $grid->filter(function($filter) {
+            $filter->expand();
+            $filter->disableIdFilter();
+            $filter->like('name', trans('admin.week_name'));
         });
-        $grid->name(trans('admin.week_name'))->editable();
+        $grid->header(function ($query) {
+            return '<i><label>*SNTLD : </label> Số người trả lời đúng</i>';
+        });
+        $grid->name(trans('admin.week_name'));
         $grid->date_start(trans('admin.date_start'))->display(function() {
             return date('H:i - d/m/Y', strtotime($this->date_start));
         });
@@ -115,15 +113,20 @@ class WeekController extends Controller
         $grid->column('number_answers', 'Số lượt trả lời')->display(function () {
             return $this->memberExam->count();
         })->label('primary');
-        $grid->column('people_correct', 'Số người trả lời đúng')->display(function () {
+        $grid->column('people_correct', 'SNTLD')->display(function () {
             return $this->countNumberUserCorrect($this->id);
         })->label('success');
         $grid->disableExport(false);
         $grid->actions(function ($grid) {
-            $grid->disableDelete(false);
             $route = route('weeks.answers', $grid->getKey());
-            $grid->prepend('<a href="'.$route.'" data-toggle="tooltip" title="Danh sách câu trả lời"><i class="fa fa-slack" aria-hidden="true"></i></a>');
+            $prize = route('weeks.prizes', $grid->getKey());
+            $grid->append('<a data-toggle="tooltip" title="Xoá" class="btn-delete-week cursor-pointer" data-value="'.$grid->getKey().'"><i class="fa fa-trash" aria-hidden="true"></i></a>');
+            $grid->prepend('<a href="'.$prize.'" data-toggle="tooltip" title="Danh sách trúng giải"><i class="fa fa-gift" aria-hidden="true"></i></a>');
+            $grid->prepend('<a href="'.$route.'" data-toggle="tooltip" title="Danh sách câu trả lời"><i class="fa fa-slack" aria-hidden="true"></i></a> &nbsp;');
+
         });
+        $grid->disableRowSelector();
+        Admin::script($this->script());
 
         return $grid;
     }
@@ -134,12 +137,9 @@ class WeekController extends Controller
      * @param mixed   $id
      * @return Show
      */
-    protected function detail($id)
-    {
+    protected function detail($id) {
         $show = new Show(Week::findOrFail($id));
-
         $show->name(trans('admin.week_name'));
-
         $show->date_start(trans('admin.date_start'))->as(function() {
             return date('H:i - d/m/Y', strtotime($this->date_start));
         });
@@ -160,7 +160,6 @@ class WeekController extends Controller
              $week = Week::find($this->id);
              return view('admin.week.question_answers', compact('week'));
         });
-
         Admin::script($this->script());
         return $show;
     }
@@ -170,8 +169,7 @@ class WeekController extends Controller
      *
      * @return Form
      */
-    protected function form()
-    {
+    protected function form() {
         $form = new Form(new Week);
 
         $form->hidden('id', 'ID');
@@ -180,13 +178,10 @@ class WeekController extends Controller
         $form->datetime('date_end', 'Ngày kết thúc');
         $form->select('status', 'Trạng thái')->options([0 => 'Chưa diễn ra', 1 => 'Đang diễn ra', 2 => 'Đã kết thúc']);
         $form->hidden('user_id_created')->default(Admin::user()->id);
-
         $form->divider('Danh sách câu hỏi');
-
         $form->hasManyNested('questions','Câu hỏi', function (Form\NestedForm $question) {
             $question->text('title', 'Nội dung câu hỏi');
         });
-
         $form->footer(function ($footer) {
             $footer->disableViewCheck();
             $footer->disableEditingCheck();
@@ -197,137 +192,38 @@ class WeekController extends Controller
     }
 
     /**
-     * Undocumented function
+     * Store new week
      *
      * @param Request $request
-     * @return void
+     * @return redirect
      */
-    public function store(Request $request)
-    {
-        if ($request->all() != null) {
-            $week = Week::create([
-                'name'              =>  $request->name,
-                'date_start'        =>  $request->date_start,
-                'date_end'          =>  $request->date_end,
-                'user_id_created'   =>  $request->user_id_created
-            ]);
+    public function store(Request $request) {
+        $data = $request->all();
+        $week = $this->service->create($data);
+        $this->service->createQuestionAndAnswer($week->id, $data);
+        $this->service->addPrize($week->id);
 
-            if (isset($request->questions)) {
-                foreach ($request->questions as $question_item) {
-                    if (!is_null($question_item['title'])) {
-                        $question = Question::create([
-                            'week_id'   =>  $week->id,
-                            'title'     =>  $question_item['title']
-                        ]);
-
-                        if (isset($question_item['answer'])) {
-                            foreach ($question_item['answer'] as $answer_item) {
-                                if (!is_null($answer_item['content'])) {
-                                    Answer::create([
-                                        'question_id'   =>  $question->id,
-                                        'content'       =>  $answer_item['content'],
-                                        'is_correct'    =>  isset($answer_item['checkbox']) ? 1 : 0
-                                    ]);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        admin_toastr(trans('admin.save_succeeded'), 'success');
+        admin_toastr('Lưu thành công', 'success');
         return redirect()->route('weeks.index');
     }
 
     /**
-     * Undocumented function
+     * Update a week
      *
      * @param Request $request
      * @return void
      */
     public function update(Request $request) {
-        if ($request->all() != null) {
-            Week::find($request->id)->update([
-                'name'              =>  $request->name,
-                'date_start'        =>  $request->date_start,
-                'date_end'          =>  $request->date_end,
-                'user_id_created'   =>  $request->user_id_created,
-                'status'            =>  $request->status
-            ]);
+        $data = $request->all();
+        $this->service->update($data);
+        $this->service->updateQuestionAndAnswer($data);
 
-            if (isset($request->questions)) {
-                foreach ($request->questions as $question_item) {
-                    if (is_null($question_item['id'])) { // add new question
-                        if (!is_null($question_item['title'])) {
-                            $question = Question::create([
-                                'week_id'   =>  $request->id,
-                                'title'     =>  $question_item['title']
-                            ]);
-
-                            if (isset($question_item['answer'])) {
-                                foreach ($question_item['answer'] as $answer_item) {
-                                    if (!is_null($answer_item['content'])) {
-                                        Answer::create([
-                                            'question_id'   =>  $question->id,
-                                            'content'       =>  $answer_item['content'],
-                                            'is_correct'    =>  isset($answer_item['checkbox']) ? 1 : 0
-                                        ]);
-                                    }
-                                }
-                            }
-                        }
-                    } else { // question old
-                        if ($question_item['_remove_'] == 1) { // delete question
-                            Question::find($question_item['id'])->delete();
-                            Answer::where('question_id', $question_item['id'])->delete();
-                        } else { // nothing
-                            Question::find($question_item['id'])->update([
-                                'title' =>  $question_item['title']
-                            ]);
-                            $current_arr_answers = Question::getArrAnswer($question_item['id']);
-
-                            if (isset($question_item['answer'])) {
-                                $arr_answers = [];
-
-                                foreach ($question_item['answer'] as $answer_item) {
-                                    if (! isset($answer_item['answer_id'])) { // add new answer
-                                        Answer::create([
-                                            'question_id'   =>  $question_item['id'],
-                                            'content'       =>  $answer_item['content'],
-                                            'is_correct'    =>  isset($answer_item['checkbox']) ? 1 : 0
-                                        ]);
-                                    } else { // answers old
-                                        $arr_answers[] = $answer_item['answer_id'];
-                                        Answer::find($answer_item['answer_id'])->update([
-                                            'content'       =>  $answer_item['content'],
-                                            'is_correct'    =>  isset($answer_item['checkbox']) ? 1 : 0
-                                        ]);
-                                    }
-                                }
-
-                                $diff = array_diff($current_arr_answers, $arr_answers); // array(1, 2, 3) -> list id answer not delete
-                                if (! empty($diff)) {
-                                    foreach ($diff as $answer_id) {
-                                        Answer::find($answer_id)->delete();
-                                    }
-                                }
-                            } else { // delete all answers
-                                foreach ($current_arr_answers as $answer_id) {
-                                    Answer::find($answer_id)->delete();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        admin_toastr(trans('admin.save_succeeded'), 'success');
+        admin_toastr('Lưu thành công', 'success');
         return redirect()->route('weeks.index');
     }
 
     public function script() {
+        $title = trans('admin.export');
         return <<<EOT
         $( document ).ready(function() {
             var content = $('.form-group').eq(6).find('.box-body').html();
@@ -338,6 +234,38 @@ class WeekController extends Controller
                 content = content.replace('&nbsp;', '');
                 $('.form-group').eq(6).find('.box-body').html(content);
             }
+
+            $('.btn-delete-week').click(function () {
+                let id = $(this).attr('data-value');
+                Swal.fire({
+                    title: 'Bạn có chắc chắn muốn xoá ?',
+                    text: "",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Xoá',
+                    cancelButtonText: 'Huỷ'
+                  }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            method: 'delete',
+                            url: 'weeks/'+id,
+                            success: function (response) {
+                                window.location.reload();
+                            }
+                       });
+                    }
+                  })
+            });
+
+            $('.btn-twitter[title="{$title}"]').removeAttr('href');
+            $('.btn-twitter[title="{$title}"]').removeAttr('target');
+
+            $('.btn-twitter[title="{$title}"]').click(function (e)  {
+                e.preventDefault();
+                window.open('weeks/export', '_blank');
+            });
         });
 
 EOT;
@@ -358,7 +286,7 @@ EOT;
     protected function gridAnswers($id)
     {
         $grid = new Grid(new MemberExam);
-        $grid->model()->where('week_id', $id);
+        $grid->model()->where('week_id', $id)->orderBy('created_at', 'asc');
         $grid->header(function ($query) use ($id) {
 
             $number = Week::countNumberUserCorrect($id);
@@ -373,14 +301,88 @@ EOT;
                 $answer = json_decode($this->answer);
                 $html = "";
                 foreach ($answer as $key => $element) {
-                    $html .= "Câu hỏi: $key - Đáp án: $element->answer_correct<br>";
+                    $html .= "Câu hỏi: ".str_replace("question_id_", "", $key)." - Đáp án: $element->answer_id<br>";
                 }
                 return $html;
             }
 
             return null;
         });
+        $grid->result('Kết quả')->display(function () {
+            return $this->result == 1 ? "<span class='label label-success'>Đúng</span>" : "<span class='label label-danger'>Sai</span>";
+        })->filter([
+            0 => 'Sai',
+            1 => 'Đúng',
+        ]);
         $grid->people_number('Dự đoán số người trả lời đúng');
+        $grid->disableCreateButton();
+        $grid->actions(function ($grid) {
+            $grid->disableView();
+            $grid->disableEdit();
+        });
+
+        return $grid;
+    }
+
+    public function destroy($id) {
+        Week::find($id)->delete();
+        admin_toastr('Xoá thành công');
+        return response()->json([
+            'result'    =>  true
+        ]);
+    }
+
+    public function export() {
+        return Excel::download(new WeeksExport, $this->fileExportName);
+    }
+
+    public function prizes($id, Content $content) {
+        return $content
+        ->header('Tuần thi trắc nghiệm')
+        ->description('Danh sách trúng giải')
+        ->body($this->gridPrizes($id));
+    }
+
+     /**
+     * Make a grid builder.
+     *
+     * @return Grid
+     */
+    protected function gridPrizes($id)
+    {
+        $grid = new Grid(new WeekPrize);
+        $grid->model()->where('week_id', $id);
+
+        $grid->order('Số thứ tự');
+        $grid->column('prize', 'Giải thưởng')->display(function () {
+            $prize = Prize::find($this->prize_id);
+            $data  = [
+                1   =>  'Giải nhất',
+                2   =>  'Giải nhì',
+                3   =>  'Giải ba',
+                4   =>  'Giải khuyến khích'
+            ];
+            return $data[$prize->level];
+        });
+        $grid->column('prize_content', 'Trị giá')->display(function () {
+            $prize = Prize::find($this->prize_id);
+            return $prize->content;
+        });
+        $grid->column('member', 'Khách hàng')->display(function () {
+            $exam = MemberExam::find($this->member_exam_id);
+            if (!is_null($exam)) {
+                $route = route('members.show', $exam->member->id);
+                return "<a href=".$route." target='_blank'>".$exam->member->name."</a>";
+            }
+            return null;
+        });
+        $grid->column('time', 'Thời gian trả lời')->display(function () {
+            $exam = MemberExam::find($this->member_exam_id);
+            if (!is_null($exam)) {
+                return date('H:i:s | d/m/Y', strtotime($exam->created_at));
+            }
+            return null;
+        });
         $grid->disableCreateButton();
         $grid->actions(function ($grid) {
             $grid->disableView();

@@ -18,7 +18,7 @@ class MemberExam extends Model
      *
      * @var array
      */
-    protected $fillable = ['member_id', 'week_id', 'answer', 'people_number'];
+    protected $fillable = ['member_id', 'week_id', 'answer', 'people_number', 'result'];
 
     /**
      * Undocumented function

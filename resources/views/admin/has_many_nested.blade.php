@@ -161,8 +161,8 @@
         $(this).parent().parent().remove();
     });
 
-    $(document).on('click', 'input[type="radio"]', function (e) {
-        $(this).parent().parent().parent().parent().find('input[type="radio"]').prop("checked", false);
-        $(this).prop("checked", true);
-    });
+    // $(document).on('click', 'input[type="radio"]', function (e) {
+    //     $(this).parent().parent().parent().parent().find('input[type="radio"]').prop("checked", false);
+    //     $(this).prop("checked", true);
+    // });
 </script>
