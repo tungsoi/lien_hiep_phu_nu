@@ -43,8 +43,8 @@
                                         <p><i>(Người nhận giải thưởng có trách nhiệm nộp thuế thu nhập cá nhân theo quy định)</i></p>
 
                                         <br>
-                                        <h2>Tuần thi đang diễn ra: {{ date('H:i - d/m/Y', strtotime($week->date_start)) .' đến '. date('H:i - d/m/Y', strtotime($week->date_end))  }}</h2>
-                                        <a class="btn btn-primary uppercase h42" href="{{ route('member.exam', $week->id) }}">Tham gia thi</a>
+                                        <h2>Tuần thi đang diễn ra: {{ isset($week->date_start) ? date('H:i - d/m/Y', strtotime($week->date_start)) .' đến '. date('H:i - d/m/Y', strtotime($week->date_end)) : 'Đang cập nhật' }}</h2>
+                                        <a class="btn btn-primary uppercase h42" @if(! isset($week->id)) style="cursor: not-allowed;" @else href="{{ route('member.exam', $week->id) }}" @endif>Tham gia thi</a>
                                     </div>
                                 </div>
                             </div>
