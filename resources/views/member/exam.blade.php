@@ -10,12 +10,7 @@
 <body>
     <div id="app">
         <div class="layout">
-            <div class="menu">
-                <div class="row">
-                    <a><i class="fa fa-user" aria-hidden="true"></i> &nbsp;{{ $member->name }}</a>
-                    <a href="{{ route('member.getLogout') }}"><i class="fa fa-sign-out" aria-hidden="true"></i> {{ trans('admin.logout') }}</a>
-                </div>
-            </div>
+            @include('member.menu')
             <main>
                 <div id="content" class="white">
                     <div class="content-container">
@@ -27,30 +22,11 @@
                                         <div><img src="{{ asset('asset/img/logo-default.png') }}" alt="Liftmap" class="" width="300" height="auto"></div>
 
                                         <div class="category-box question">
-                                            <table class="table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="tx-center">Tuần thi</th>
-                                                        <th class="tx-center">Thời gian diễn ra</th>
-                                                        <th class="tx-center">Người dự thi</th>
-                                                        <th class="tx-center">Số điện thoại</th>
-                                                        <th class="tx-center">Ngày dự thi</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr  align="center">
-                                                        <td>{{ $week->name }}</td>
-                                                        <td>{{ date('H:i - d/m/Y', strtotime($week->date_start)) .' đến '. date('H:i - d/m/Y', strtotime($week->date_end))  }}</td>
-                                                        <td>{{ $member->name }}</td>
-                                                        <td>{{ $member->mobile_phone }}</td>
-                                                        <td>{{ date('d/m/Y', strtotime(now())) }}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                            <center><h2 class="uppercase"><label for="">- Danh sách câu hỏi -</label></h2></center>
 
                                             <form id="exam-form" class="form-horizontal" role="form" method="POST" action="{{ route('member.storeExam') }}">
                                                 {{ csrf_field() }}
-                                                <input type="hidden" name="member_id" value="{{ $member->id }}">
+                                                <input type="hidden" name="user_id" value="{{ $member->id }}">
                                                 <input type="hidden" name="week_id" value="{{ $week->id }}">
                                                 <hr>
                                                 @if (isset($week))
@@ -63,14 +39,17 @@
                                                                 @endforeach
                                                             @endif
 
-                                                            <input type="hidden" class="answer_correct" name="question[question_id_{{$question->id}}][answer_id]" value="">
+                                                            <input type="hidden" class="answer_correct" name="question[question_id_{{$question->id}}]" value="">
                                                         </div>
                                                     @endforeach
                                                 @endif
-                                                <br>
+                                                <br> <hr>
                                                 <div class="category-box question">
                                                     <h2 class="question-title" style="">Dự đoán số người trả lời đúng</h2>
-                                                    <input type="text" class="people_number form-control" name="people_number" value="" required="required" placeholder="Vui lòng dự đoán số người trả lời">
+                                                    <input type="text" class="people_number form-control" name="people_number" value="" placeholder="Vui lòng dự đoán số người trả lời" @if (isset($errors) && $errors->has('people_number')) autofocus @endif required>
+                                                    @if (isset($errors) && $errors->has('people_number'))
+                                                        <label id="people_number_error" class="error" for="people_number" >{{ $errors->first('people_number') }}</label>
+                                                    @endif
                                                 </div>
 
                                                 <div class="category-box question">
@@ -95,10 +74,18 @@
 
     <script>
         $('.answer-item').click(function () {
-            $(this).addClass('answer-active');
-            let vale = $(this).parent().find('input[type="hidden"].answer_correct').val();
-            vale += $(this).attr('data-id')+",";
-            $(this).parent().find('input[type="hidden"].answer_correct').val(vale);
+            let answer_id = $(this).attr('data-id');
+            let value = $(this).parent().find('input[type="hidden"].answer_correct').val();
+
+            if ($(this).hasClass('answer-active')) {
+                $(this).removeClass('answer-active');
+                value = value.replace(answer_id+",", "");
+            } else {
+                $(this).addClass('answer-active');
+                value += $(this).attr('data-id')+",";
+            }
+
+            $(this).parent().find('input[type="hidden"].answer_correct').val(value);
         });
 
         $('input[name="people_number"]').maskNumber({

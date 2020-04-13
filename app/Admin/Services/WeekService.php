@@ -198,19 +198,38 @@ class WeekService {
      * @return void
      */
     public static function checkResultAnswer($res) {
-
         if (!is_null($res)) {
+            $data = []; // question_id => array answer id
             foreach ($res as $key => $question) {
                 $questionId = str_replace("question_id_", "", $key);
-                $answerIdArr = explode(",", $question['answer_id']);
+                $answerIdArr = explode(",", $question);
 
-                if (!is_null($answerIdArr)) {
-                    foreach ($answerIdArr as $answerId) {
-                        if ($answerId != "") {
-                            $checkCorrect = Answer::find($answerId)->is_correct == 1 ? true : false;
+                foreach ($answerIdArr as $item => $value) {
+                    if ($value == "") {
+                        unset($answerIdArr[$item]);
+                    } else {
+                        $answerIdArr[$item] = (int) $value;
+                    }
+                }
 
-                            if (! $checkCorrect) { return false; }
-                        }
+                if (sizeof($answerIdArr) == 0) { // khong tra loi du cau hoi
+                    return false;
+                }
+
+                $data[$questionId] = $answerIdArr;
+            }
+
+            // so sanh tung cau tra loi
+            foreach ($data as $questionId => $arrayUserAnswer) {
+                $defaultAnswer = Question::getArrCorrectAnswer($questionId);
+
+                if (sizeof($defaultAnswer) != sizeof($arrayUserAnswer)) {
+                    return false;
+                } else {
+                    $diff = array_diff($arrayUserAnswer, $defaultAnswer);
+                    if (sizeof($diff) > 0) {
+                        // dap an sai
+                        return false;
                     }
                 }
             }

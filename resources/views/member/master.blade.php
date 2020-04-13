@@ -11,6 +11,7 @@
     <script src="{{ asset('asset/js/modernizr.js')}}"></script>
     <link rel="stylesheet" href="{{ asset('asset/css/bootstrap-datepicker3.css')}}">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 </head>
 
 <body>
@@ -40,6 +41,7 @@
 	<script src="{{ asset('asset/js/velocity.min.js')}}"></script>
     <script src="{{ asset('asset/js/functions.js')}}"></script>
     <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     @yield('script')
 </body>
 </html>

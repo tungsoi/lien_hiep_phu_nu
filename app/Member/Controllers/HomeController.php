@@ -1,18 +1,120 @@
 <?php
 
-namespace App\Admin\Controllers;
+namespace App\Member\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Week;
+use App\Models\MemberExam;
 use Brazzer\Admin\Controllers\HasResourceActions;
 use Brazzer\Admin\Form;
 use Brazzer\Admin\Grid;
 use Brazzer\Admin\Layout\Content;
 use Brazzer\Admin\Show;
-use App\User;
+use App\Models\Member;
+use App\Admin\Services\WeekService;
+use Illuminate\Support\Facades\Validator;
 
-class MemberController extends Controller
+class HomeController extends Controller
 {
-    use HasResourceActions;
+    /**
+     * Show view dashboard
+     *
+     * @return void
+     */
+    public function dashboard() {
+        $member = Auth::user();
+        if (! $member) {
+            return redirect()->route('member.login');
+        }
+        $week = Week::where('status', 1)->orderBy('date_start', 'asc')->first();
+        return view('member.dashboard', compact('week', 'member'));
+    }
+
+    /**
+     * Detail exam
+     *
+     * @param [type] $id
+     * @return void
+     */
+    public function exam($id) {
+        $week = Week::find($id);
+        if (! $week) {
+            return redirect()->route('member.dashboard');
+        }
+
+        $order = $this->getArrayString();
+        $member = Auth::user();
+
+        return view('member.exam', compact('week', 'order', 'member'));
+    }
+
+    /**
+     * Store exam
+     *
+     * @param Request $r
+     * @return void
+     */
+    public function storeExam(Request $request) {
+        $data = $request->all();
+
+        $validator = $this->examValidator($data);
+        if ($validator->fails()) {
+            return redirect()->back()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
+        $data['answer'] = json_encode($data['question']);
+        $data['result'] = WeekService::checkResultAnswer($data['question']);
+        $data['people_number'] = str_replace(",", "", $data['people_number']);
+        unset($data['_token']);
+        unset($data['question']);
+
+        MemberExam::firstOrCreate($data);
+
+        session()->flash('send-exam', 'Gửi câu trả lời thành công');
+        return redirect()->route('member.dashboard');
+    }
+
+    /**
+     * Get a validator for an incoming login request.
+     *
+     * @param array $data
+     *
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function examValidator(array $data)
+    {
+        return Validator::make($data, [
+            'people_number'        => 'required',
+        ]);
+    }
+
+    /**
+     * Change number to charracter
+     *
+     * @return void
+     */
+    public function getArrayString() {
+        return [
+            0 => 'A',
+            1 => 'B',
+            2 => 'C',
+            3 => 'D',
+            4 => 'E',
+            5 => 'F',
+            6 => 'G',
+            7 => 'H',
+            8 => 'I',
+            9 => 'K',
+            10 => 'L',
+            11 => 'M',
+            12 => 'N',
+            13 => 'O'
+        ];
+    }
 
     /**
      * Index interface.
@@ -35,10 +137,10 @@ class MemberController extends Controller
      */
     protected function grid()
     {
-        $grid = new Grid(new User);
-        $grid->model()->where('is_member', 1);
+        $grid = new Grid(new Member);
+
         $grid->name(trans('admin.name'))->editable();
-        $grid->mobile(trans('admin.mobile'));
+        $grid->mobile_phone(trans('admin.mobile'));
         $grid->birthday(trans('admin.birthday'));
         $grid->gender(trans('admin.gender'))->display(function ($gender) {
             switch($gender) {
@@ -48,6 +150,7 @@ class MemberController extends Controller
                 default: return null;
             }
         })->label();
+
         $grid->created_at('Ngày đăng ký')->display(function ($created_at) {
             return date('H:i - d/m/Y', strtotime($created_at));
         });
@@ -107,9 +210,11 @@ class MemberController extends Controller
      */
     protected function detail($id)
     {
-        $show = new Show(User::findOrFail($id));
+        $show = new Show(Member::findOrFail($id));
+
+        $show->id('ID');
         $show->name(trans('admin.name'));
-        $show->mobile(trans('admin.mobile'));
+        $show->mobile_phone(trans('admin.mobile'));
         $show->birthday(trans('admin.birthday'));
         $show->gender(trans('admin.gender'))->as(function ($gender) {
             switch($gender) {
@@ -119,6 +224,7 @@ class MemberController extends Controller
                 default: return null;
             }
         })->label();
+
         return $show;
     }
 
@@ -129,17 +235,20 @@ class MemberController extends Controller
      */
     protected function form()
     {
-        $form = new Form(new User);
+        $form = new Form(new Member);
+
         $form->text('name', trans('admin.name'))->rules(['required'], [
             'required'  =>  trans('admin.place_holder_name')
         ]);
-        $form->text('mobile', trans('admin.mobile'))->rules(['required', 'unique:members'], [
+
+        $form->text('mobile_phone', trans('admin.mobile'))->rules(['required', 'unique:members'], [
             'required'  =>  trans('admin.place_holder_mobile_phone'),
             'unique'    =>  'Số điện thoại này đã được sử dụng'
         ]);
         $form->date('birthday', trans('admin.birthday'))->rules(['required'], [
             'required'  =>  trans('admin.place_holder_birthday')
         ]);
+
         $gender  = [
             0   =>  trans('admin.female'),
             1   =>  trans('admin.male'),
@@ -149,6 +258,7 @@ class MemberController extends Controller
         $form->password('password')->rules(['required'], [
             'required'  =>  trans('admin.place_holder_password')
         ]);
+
         $form->footer(function ($footer) {
             $footer->disableViewCheck();
             $footer->disableEditingCheck();

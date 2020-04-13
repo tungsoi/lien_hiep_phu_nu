@@ -15,7 +15,7 @@ class CreateMemberExamsTable extends Migration
     {
         Schema::create('member_exams', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('member_id')->nullable();
+            $table->integer('user_id')->nullable();
             $table->integer('week_id')->nullable();
             $table->text('answer')->nullable();
             $table->string('people_number')->nullable();

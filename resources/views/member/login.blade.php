@@ -11,22 +11,30 @@
                 <hr>
                 {{ csrf_field() }}
 
+                @if(session('register_success'))
+                    <label class="control-label" for="inputError" style="color: green">
+                        <i class="fa fa-times-circle-o"></i> {{ session()->get('register_success') }}
+                    </label>
+                    <br> <br>
+                @endif
+
                 @if (isset($errors) && $errors->has('registed'))
                     <h5 class="registed">{{ trans('admin.register-successed') }}</h5> <br>
                 @endif
 
                 <div class="form-group">
-                    <label for="username" class="control-label">{{ trans('admin.mobile') }}</label>
-                    <input id="username" type="text" class="form-control" name="mobile_phone" value="{{ old('username') }}" required autofocus placeholder="{{ trans('admin.place_holder_mobile_phone') }}">
+                    <input id="mobile" type="text" class="form-control" name="mobile" value="{{ old('mobile') }}" autofocus placeholder="{{ trans('admin.mobile') }}">
 
-                    @if (isset($errors) && $errors->has('mobile_phone'))
-                        <label id="mobile_phone-error" class="error" for="mobile_phone">{{ $errors->first('mobile_phone') }}</label>
+                    @if (isset($errors) && $errors->has('mobile'))
+                        <label id="mobile-error" class="error" for="mobile">{{ $errors->first('mobile') }}</label>
                     @endif
                 </div>
 
-                <div class="form-group">
-                    <label for="password" class="control-label">{{ trans('admin.password') }}</label>
-                    <input id="password" type="password" class="form-control" name="password" required placeholder="{{ trans('admin.place_holder_password') }}">
+                <div class="form-group{{ isset($errors) && $errors->has('password') ? ' has-error' : '' }}">
+                    <input id="password" type="password" class="form-control" name="password"  placeholder="{{ trans('admin.password') }}" value="{{ old('password') }}">
+                    @if (isset($errors) && $errors->has('password'))
+                        <label id="password-error" class="error" for="password">{{ $errors->first('password') }}</label>
+                    @endif
                 </div>
             </div>
         </div>
@@ -47,21 +55,4 @@
     </form>
 </div>
 
-@endsection
-
-@section('script')
-<script>
-    $(document).ready(function() {
-        $("#wrapped").validate({
-            rules: {
-                mobile_phone: "required",
-                password: "required"
-            },
-            messages: {
-                mobile_phone: '{{ trans('admin.place_holder_mobile_phone') }}',
-                password: '{{ trans('admin.place_holder_password') }}',
-            }
-        });
-    });
-</script>
 @endsection

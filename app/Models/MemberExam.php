@@ -18,7 +18,7 @@ class MemberExam extends Model
      *
      * @var array
      */
-    protected $fillable = ['member_id', 'week_id', 'answer', 'people_number', 'result'];
+    protected $fillable = ['user_id', 'week_id', 'answer', 'people_number', 'result'];
 
     /**
      * Undocumented function
@@ -26,6 +26,6 @@ class MemberExam extends Model
      * @return void
      */
     public function member() {
-        return $this->hasOne('App\Models\Member', 'id', 'member_id');
+        return $this->hasOne('App\User', 'id', 'user_id');
     }
 }

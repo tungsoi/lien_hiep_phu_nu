@@ -286,11 +286,12 @@ EOT;
     protected function gridAnswers($id)
     {
         $grid = new Grid(new MemberExam);
-        $grid->model()->where('week_id', $id)->orderBy('created_at', 'asc');
+        $grid->model()->where('week_id', $id)->orderBy('created_at', 'desc');
         $grid->header(function ($query) use ($id) {
-
+            $week = Week::find($id);
             $number = Week::countNumberUserCorrect($id);
-            return '<i style="color: red">*Số người trả lời đúng câu hỏi : <label> '.$number.'</label></i>';
+            return '<label> *'.$week->name.' : '.date('H:i - d/m/Y', strtotime($week->date_start)) .' đến '. date('H:i - d/m/Y', strtotime($week->date_end)).'</label>'.
+                '<br><i style="color: red">*Số người trả lời đúng câu hỏi : <label> '.$number.'</label></i>';
         });
         $grid->column('member_name', 'Tên')->display(function () {
             return $this->member->name;
@@ -301,7 +302,7 @@ EOT;
                 $answer = json_decode($this->answer);
                 $html = "";
                 foreach ($answer as $key => $element) {
-                    $html .= "Câu hỏi: ".str_replace("question_id_", "", $key)." - Đáp án: $element->answer_id<br>";
+                    $html .= "Câu hỏi: ".str_replace("question_id_", "", $key)." - Đáp án: $element<br>";
                 }
                 return $html;
             }
@@ -314,11 +315,18 @@ EOT;
             0 => 'Sai',
             1 => 'Đúng',
         ]);
-        $grid->people_number('Dự đoán số người trả lời đúng');
+        $grid->people_number('Dự đoán số người trả lời đúng')->display(function () {
+            return number_format(str_replace(',', '', $this->people_number));
+        });
         $grid->disableCreateButton();
         $grid->actions(function ($grid) {
             $grid->disableView();
             $grid->disableEdit();
+        });
+
+        $grid->tools(function (Grid\Tools $tools) {
+            // Add a button, the argument can be a string, or an instance of the object that implements the Renderable or Htmlable interface
+            $tools->append('<a class="btn btn-xs btn-warning" onClick="window.history.back();">Quay lại</a>');
         });
 
         return $grid;
@@ -387,6 +395,12 @@ EOT;
         $grid->actions(function ($grid) {
             $grid->disableView();
             $grid->disableEdit();
+        });
+
+
+        $grid->tools(function (Grid\Tools $tools) {
+            // Add a button, the argument can be a string, or an instance of the object that implements the Renderable or Htmlable interface
+            $tools->append('<a class="btn btn-xs btn-warning" onClick="window.history.back();">Quay lại</a>');
         });
 
         return $grid;

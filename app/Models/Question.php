@@ -33,7 +33,7 @@ class Question extends Model
     }
 
     /**
-     * Undocumented function
+     * get array answer
      *
      * @param [type] $id
      * @return array
@@ -43,4 +43,17 @@ class Question extends Model
         $answer = $question->answers->pluck('id')->toArray();
         return $answer;
     }
+
+     /**
+     * get array correct answer
+     *
+     * @param [type] $id
+     * @return array
+     */
+    public static function getArrCorrectAnswer($id) {
+        $question = self::find($id);
+        $answer = $question->answers->where('is_correct', 1)->pluck('id')->toArray();
+        return $answer;
+    }
+
 }

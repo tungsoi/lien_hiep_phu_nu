@@ -35,7 +35,11 @@ class User extends Model implements AuthenticatableContract
         'provider',
         'is_social',
         'token',
-        'created_date'
+        'created_date',
+        'mobile',
+        'birthday',
+        'gender',
+        'is_member'
     ];
 
     /**

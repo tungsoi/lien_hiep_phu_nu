@@ -6,17 +6,19 @@
     <link rel="stylesheet" href="{{ asset('asset/css/dashboard.css') }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('asset/css/custom.css') }}">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <style>
+        .toast-top-center, .toast-top-right {
+            margin-top: 40px;
+            opacity: 1;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
         <div class="layout">
-            <div class="menu">
-                <div class="row">
-                    <a><i class="fa fa-user" aria-hidden="true"></i> &nbsp;{{ $member->name }}</a>
-                    <a href="{{ route('member.getLogout') }}"><i class="fa fa-sign-out" aria-hidden="true"></i> {{ trans('admin.logout') }}</a>
-                </div>
-            </div>
+            @include('member.menu')
             <main>
                 <div id="content" class="white bg-content">
                     <div class="content-container">
@@ -43,8 +45,9 @@
                                         <p><i>(Người nhận giải thưởng có trách nhiệm nộp thuế thu nhập cá nhân theo quy định)</i></p>
 
                                         <br>
-                                        <h2>Tuần thi đang diễn ra: {{ isset($week->date_start) ? date('H:i - d/m/Y', strtotime($week->date_start)) .' đến '. date('H:i - d/m/Y', strtotime($week->date_end)) : 'Đang cập nhật' }}</h2>
-                                        <a class="btn btn-primary uppercase h42" @if(! isset($week->id)) style="cursor: not-allowed;" @else href="{{ route('member.exam', $week->id) }}" @endif>Tham gia thi</a>
+                                        <h2>* Tuần thi đang diễn ra: {{ $week->name ?? "Chưa mở tuần thi"}}</h2>
+                                        <h2>* Thời gian diễn ra: {{ isset($week->date_start) ? date('H:i - d/m/Y', strtotime($week->date_start)) .' đến '. date('H:i - d/m/Y', strtotime($week->date_end)) : 'Chưa mở tuần thi' }}</h2>
+                                        <a class="btn btn-primary uppercase h42" @if(! isset($week->id)) style="cursor: not-allowed;" data-join="false" @else href="{{ route('member.exam', $week->id) }}" @endif >Tham gia thi</a>
                                     </div>
                                 </div>
                             </div>
@@ -62,8 +65,56 @@
 
     @if (session()->has('send-exam'))
         <script>
+            toastr.options = {
+                "closeButton": false,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": false,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "10000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut",
+                "progressBar": true,
+            }
             toastr["success"]("Gửi câu trả lời thành công");
         </script>
     @endif
+
+    <script>
+        $('.btn-primary').on('click', function () {
+            let value = $(this).data('join');
+
+            if (value != null && ! value) {
+
+                toastr.options = {
+                    "closeButton": false,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": false,
+                    "positionClass": "toast-top-center",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "10000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut",
+                    "progressBar": true,
+                }
+
+                toastr["error"]("Hiện tại chưa có tuần thi trắc nghiệm nào được mở. Vui lòng quay lại sau và tham gia thi.");
+            }
+        });
+    </script>
 </body>
 </html>
