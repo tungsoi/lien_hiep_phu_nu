@@ -44,17 +44,40 @@ class FetchPrizeOnWeek extends Command
      */
     public function handle()
     {
-        // Chua check group by member
-        $week = Week::where('status', 1)->first();
-        $prizes = $week->prizes->count();
-        $exams = MemberExam::where('week_id', $week->id)->where('result', 1)->orderBy('created_at', 'asc')->limit($prizes)->get();
-        foreach ($exams as $key => $exam) {
-            $gift = WeekPrize::where('week_id', $week->id)->where('order', $key+1)->first();
-            $gift->member_exam_id = $exam->id;
-            $gift->save();
-        }
+        try {
 
-        echo "- success\n";
-        return true;
+            // Check nguoi tra loi dung va fetch giai thuong
+            $week = Week::where('status', 1)->first();
+            $prizes = $week->prizes;
+            $exams = MemberExam::where('week_id', $week->id)->where('result', 1)->where('created_at', '<', $week->date_end)->get();
+
+            if ($exams) {
+                foreach ($exams as $exam) {
+                    $sub = $exam->people_number > $exams->count() ? $exam->people_number - $exams->count() : - $exam->people_number + $exams->count();
+
+                    if ($exam->sub == "") {
+                        $exam->sub = $sub;
+                        $exam->save();
+                    }
+                }
+
+                $list = MemberExam::where('week_id', $week->id)
+                        ->whereNotNull('sub')
+                        ->orderBy('sub', 'asc')
+                        ->orderBy('created_at', 'asc')
+                        ->limit(11)
+                        ->get();
+
+                foreach ($prizes as $key => $prize) {
+                    $prize->member_exam_id = $list[$key]->id;
+                    $prize->save();
+                }
+            }
+
+            echo "- success\n";
+            return true;
+        } catch (\Exception $e) {
+            dd($e);
+        }
     }
 }

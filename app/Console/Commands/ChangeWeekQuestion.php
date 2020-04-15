@@ -47,6 +47,8 @@ class ChangeWeekQuestion extends Command
         // Chua check group by member
         $week = Week::where('status', 1)->first();
         if (!is_null($week) && $week->date_end < date('Y-m-d H:i:s', strtotime(now()))) {
+
+        dd('oke');
             $week->status = 2;
             $week->save();
 
