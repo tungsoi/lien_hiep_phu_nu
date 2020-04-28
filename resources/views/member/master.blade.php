@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{ asset('asset/css/bootstrap-datepicker3.css')}}">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    @yield('style')
 </head>
 
 <body>

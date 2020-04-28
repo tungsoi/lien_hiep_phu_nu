@@ -22,6 +22,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Models\WeekPrize;
 use App\Models\Prize;
 use App\Admin\Services\WeekService;
+use App\User;
 
 class WeekController extends Controller {
     use HasResourceActions;
@@ -294,9 +295,10 @@ EOT;
                 '<br><i style="color: red">*Số người trả lời đúng câu hỏi : <label> '.$number.'</label></i>';
         });
         $grid->column('member_name', 'Tên')->display(function () {
-            return $this->member->name;
+            return $this->member->name ?? "Đang cập nhật";
         });
         $grid->answer('Câu trả lời')->display(function() {
+            return null;
             if (!is_null($this->answer)) {
 
                 $answer = json_decode($this->answer);

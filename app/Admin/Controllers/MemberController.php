@@ -3,6 +3,8 @@
 namespace App\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\District;
+use App\Models\Province;
 use Brazzer\Admin\Controllers\HasResourceActions;
 use Brazzer\Admin\Form;
 use Brazzer\Admin\Grid;
@@ -48,6 +50,13 @@ class MemberController extends Controller
                 default: return null;
             }
         })->label();
+        $grid->address(trans('admin.address'));
+        $grid->district(trans('admin.district'))->display(function ($district) {
+            return District::where('district_id', $this->district)->first()->name ?? "";
+        });
+        $grid->province(trans('admin.province'))->display(function ($province) {
+            return Province::where('province_id',$this->province)->first()->name ?? "";
+        });
         $grid->created_at('Ngày đăng ký')->display(function ($created_at) {
             return date('H:i - d/m/Y', strtotime($created_at));
         });
@@ -119,6 +128,13 @@ class MemberController extends Controller
                 default: return null;
             }
         })->label();
+        $show->address(trans('admin.address'));
+        $show->district(trans('admin.district'))->as(function ($district) {
+            return District::where('district_id', $this->district)->first()->name ?? "";
+        });
+        $show->province(trans('admin.province'))->as    (function ($province) {
+            return Province::where('province_id',$this->province)->first()->name ?? "";
+        });
         return $show;
     }
 

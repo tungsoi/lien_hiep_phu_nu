@@ -39,7 +39,10 @@ class User extends Model implements AuthenticatableContract
         'mobile',
         'birthday',
         'gender',
-        'is_member'
+        'is_member',
+        'address',
+        'province',
+        'district'
     ];
 
     /**

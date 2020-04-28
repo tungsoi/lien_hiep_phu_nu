@@ -2,6 +2,9 @@
 
 namespace App\Member\Controllers;
 
+use App\Models\District;
+use App\Models\Province;
+use App\Models\Ward;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -29,7 +32,10 @@ class RegisterController extends Controller
      * @return view
      */
     public function register() {
-        return view('member.register');
+        $provinces = Province::all();
+        $wards = Ward::all();
+        $districts = District::all();
+        return view('member.register', compact('provinces', 'districts'));
     }
 
     /**
@@ -87,18 +93,25 @@ class RegisterController extends Controller
             ],
             'password'       => 'min:6|confirmed',
             'birthday'  =>  'required',
-            'gender'        =>  'required'
+            'gender'        =>  'required',
+            'province'  =>  'required',
+            'district'  =>  'required',
+            'address'   =>  'required'
         ], [
             'name.required'         => trans('validation.required'),
+            'name.min'              => 'Họ và tên tối thiểu 6 ký tự',
             'mobile.required'       => trans('validation.required'),
-            'mobile.unique'         => trans('validation.mobile.unique'),
+            'mobile.unique'         => 'Số điện thoại đã được sử dụng',
             'email.required'        => trans('validation.required'),
-            'email.unique'          => trans('validation.email.unique'),
+            'email.unique'          => 'Email đã được sử dụng',
             'email.email'           => trans('validation.email.email'),
             'password.confirmed'    => trans('validation.password.confirmed'),
             'birthday.required'         => trans('validation.required'),
             'gender.required'         => trans('validation.required'),
             'password.min'         => trans('validation.password.min'),
+            'province.required'         => trans('validation.required'),
+            'district.required'         => trans('validation.required'),
+            'address.required'         => trans('validation.required'),
         ]);
     }
 }

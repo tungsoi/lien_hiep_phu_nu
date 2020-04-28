@@ -157,5 +157,8 @@ return [
     'register-successed'    =>  'Đăng ký thành công',
     're-password'   =>  'Nhập lại mật khẩu',
     'place_holder_re_password' =>  'Vui lòng nhập lại mật khẩu',
-    'register_success'   =>  'Đăng ký thành công. Vui lòng đăng nhập'
+    'register_success'   =>  'Đăng ký thành công. Vui lòng đăng nhập',
+    'province'  =>  'Thành phố',
+    'district'  =>  'Quận / Huyện',
+    'address'   => 'Số nhà / Đường / Phố'
 ];

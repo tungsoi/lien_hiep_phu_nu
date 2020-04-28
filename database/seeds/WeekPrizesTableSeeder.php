@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 use App\Models\WeekPrize;
 use App\Models\MemberExam;
+use App\Models\Week;
 
 class WeekPrizesTableSeeder extends Seeder
 {
@@ -13,13 +14,16 @@ class WeekPrizesTableSeeder extends Seeder
      */
     public function run()
     {
+        // Week::truncate();
+        // WeekPrize::truncate();
         MemberExam::truncate();
-        for ($i = 0; $i < 3000; $i++) {
+
+        for ($i = 0; $i < 10000; $i++) {
             MemberExam::create([
-                'user_id'   =>  $i,
+                'user_id'   =>  rand(1, 2274),
                 'week_id'   =>  1,
                 'answer'    =>  'test',
-                'people_number' =>  rand(1450, 1550),
+                'people_number' =>  rand(4000, 6000),
                 'result'    =>  rand(0, 1)
             ]);
         }

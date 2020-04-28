@@ -46,33 +46,66 @@ class FetchPrizeOnWeek extends Command
     {
         try {
 
-            // Check nguoi tra loi dung va fetch giai thuong
+// Xử lý dữ liệu trả lời của tuần hiện tại
+            // Tuần thi hiện tại
             $week = Week::where('status', 1)->first();
+
+            // Danh sách giải thưởng của tuần quay
             $prizes = $week->prizes;
-            $exams = MemberExam::where('week_id', $week->id)->where('result', 1)->where('created_at', '<', $week->date_end)->get();
+
+            // Danh sách tất cả các câu trả lời đúng (chưa check trùng người tham gia)
+            $exams = MemberExam::where('week_id', $week->id)
+                ->where('result', 1)
+                ->where('created_at', '<', $week->date_end)
+                ->get();
+
+            // Số lượng người tham gia có câu trả lời đúng
+            $number_people_corrects = $exams->groupBy('user_id')->count();
 
             if ($exams) {
                 foreach ($exams as $exam) {
-                    $sub = $exam->people_number > $exams->count() ? $exam->people_number - $exams->count() : - $exam->people_number + $exams->count();
+                    // Tính hiệu số giữa dự đoán và số người trả lời đúng thực tế
+                    $sub = $exam->people_number > $number_people_corrects
+                        ? $exam->people_number - $number_people_corrects
+                        : - $exam->people_number + $number_people_corrects;
 
+                    // Update vào database
                     if ($exam->sub == "") {
                         $exam->sub = $sub;
                         $exam->save();
                     }
                 }
 
+                // Lấy list câu trả lời sau khi đã sắp xếp theo số dự đoán
                 $list = MemberExam::where('week_id', $week->id)
                         ->whereNotNull('sub')
                         ->orderBy('sub', 'asc')
                         ->orderBy('created_at', 'asc')
-                        ->limit(11)
                         ->get();
 
+                // Lọc trùng 1 người trà lời
+                $list_unique = $list->groupBy('user_id');
+
+                // Lấy ra id cuối cùng
+                $data_final = [];
+                $flag = 0;
+                foreach ($list_unique as $key => $row) {
+                    if ($flag < 8) {
+                        $data_final[] = $row[0]->id;
+                    }
+                    $flag++;
+                }
+
+                // Đẩy vào danh sách giải bảng week_prizes
                 foreach ($prizes as $key => $prize) {
-                    $prize->member_exam_id = $list[$key]->id;
-                    $prize->save();
+                    if (isset($data_final[$key]) ) {
+                        $prize->member_exam_id = $data_final[$key];
+                        $prize->save();
+                    }
                 }
             }
+
+// Đổi trạng thái sang tuần thi khác
 
             echo "- success\n";
             return true;

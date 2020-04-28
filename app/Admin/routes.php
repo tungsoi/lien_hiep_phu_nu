@@ -2,6 +2,7 @@
 
 use Illuminate\Routing\Router;
 use Brazzer\Admin\Facades\Admin;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /** Member */
