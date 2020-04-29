@@ -38,7 +38,7 @@
                                             <div class="col-sm-1">
                                                 <div class="col-sm-8">
                                                     <input type="hidden" name="questions[{{$pk}}][answer][new_{{$key+1}}][answer_id]" value="{{ $answer->id }}">
-                                                    <input type="radio" name="questions[{{$pk}}][answer][new_{{$key+1}}][checkbox]" value="correct" @if ($answer->is_correct == 1) checked @endif>
+                                                    <input type="checkbox" name="questions[{{$pk}}][answer][new_{{$key+1}}][checkbox]" value="correct" @if ($answer->is_correct == 1) checked @endif>
                                                 </div>
                                             </div>
                                             <div class="col-sm-9">
