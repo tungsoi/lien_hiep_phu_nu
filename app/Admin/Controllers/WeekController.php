@@ -302,8 +302,26 @@ EOT;
 
                 $answer = json_decode($this->answer);
                 $html = "";
+                $key_ques = 1;
                 foreach ($answer as $key => $element) {
-                    $html .= "Câu hỏi: ".str_replace("question_id_", "", $key)." - Đáp án: $element<br>";
+                    $question_id = str_replace("question_id_", "", $key);
+                    $question = Question::find($question_id);
+                    $arr_answers = explode(',', $element);
+                    unset($arr_answers[sizeof($arr_answers)-1]);
+
+                    $all_answers = Question::getArrAnswer($question_id);
+                    $char = [];
+                    if (sizeof($arr_answers) > 0) {
+                        foreach ($arr_answers as $row) {
+                            $key = array_search((int) $row, $all_answers);
+                            $char[] = Question::getArrayString($key);
+                        }
+                    }
+
+                    $char_str = implode(', ', $char);
+
+                    $html .= "Câu hỏi: ".$key_ques." - Đáp án: $char_str<br>";
+                    $key_ques++;
                 }
                 return $html;
             }
