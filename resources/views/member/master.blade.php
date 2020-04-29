@@ -23,8 +23,8 @@
                     <a href="/" id="logo"><img src="{{ asset('asset/img/logo-default.png')}}" alt="" width="300" height="auto"></a>
 					<div>
                         <figure><img src="{{ asset('asset/img/info_graphic_1.svg')}}" alt="" class="img-fluid"></figure>
-                        <h2 class="master-title">HỘI LIÊN HIỆP PHỤ NỮ VIỆT NAM</h2>
-						<p class="master-desciption">VIET NAM WOMEN'S UNION</p>
+                        <h2 class="master-title" style="text-transform: uppercase">Cuộc thi trắc nghiệm</h2>
+						<p class="master-desciption">"Tìm hiểu 90 năm hình thành và phát triển <br>Hội Liên hiệp Phụ nữ Việt Nam"</p>
 						<a href="http://vwu.vn/" class="btn_1 rounded" target="_blank">TRANG CHỦ</a>
 					</div>
 					<div class="copy">© Bản quyền thuộc về Hội Liên hiệp Phụ nữ Việt Nam</div>
