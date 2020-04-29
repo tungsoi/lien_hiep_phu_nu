@@ -24,10 +24,7 @@ class HomeController extends Controller
      * @return void
      */
     public function dashboard() {
-        $member = Auth::user();
-        if (! $member) {
-            return redirect()->route('member.login');
-        }
+        $member = Auth::user() ?? null;
         $week = Week::where('status', 1)->orderBy('date_start', 'asc')->first();
         return view('member.dashboard', compact('week', 'member'));
     }
@@ -40,7 +37,11 @@ class HomeController extends Controller
      */
     public function exam($id) {
         $week = Week::find($id);
-        if (! $week) {
+        if (! Auth::user()) {
+            return redirect()->route('member.dashboard');
+        }
+
+        if ($week == null) {
             return redirect()->route('member.dashboard');
         }
 

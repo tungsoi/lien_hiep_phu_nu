@@ -45,12 +45,17 @@
                                         <p>- 01 Giải cho Hội Phụ nữ cấp tỉnh vận động nhiều người tham gia nhất: Trị giá <b>1.000.000 đồng</b>.</p>
                                         <p>- 01 Giải cho người dự thi nhỏ tuối nhất: Trị giá <b>300.000 đồng</b>.</p>
                                         <p>- 01 Giải cho người dự thi lớn tuổi nhất: Trị giá <b>200.000 đồng</b>.</p>
-                                        <p><i>(Người nhận giải thưởng có trách nhiệm nộp thuế thu nhập cá nhân theo quy định)</i></p>
+                                        {{-- <p><i>(Người nhận giải thưởng có trách nhiệm nộp thuế thu nhập cá nhân theo quy định)</i></p> --}}
 
                                         <br>
                                         <h2>* Tuần thi đang diễn ra: {{ $week->name ?? "Chưa mở tuần thi"}}</h2>
                                         <h2>* Thời gian diễn ra: {{ isset($week->date_start) ? date('H:i - d/m/Y', strtotime($week->date_start)) .' đến '. date('H:i - d/m/Y', strtotime($week->date_end)) : 'Chưa mở tuần thi' }}</h2>
-                                        <a class="btn btn-primary uppercase h42" @if(! isset($week->id)) style="cursor: not-allowed;" data-join="false" @else href="{{ route('member.exam', $week->id) }}" @endif >Tham gia thi</a>
+
+                                        @if (Auth::user())
+                                            <a class="btn btn-primary uppercase h42" @if(! isset($week->id)) style="cursor: not-allowed;" data-join="false" @else href="{{ route('member.exam', $week->id) }}" @endif >Tham gia thi</a>
+                                        @else
+                                            <a class="btn btn-primary uppercase h42 btn-notlogin">Tham gia thi</a>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -117,6 +122,33 @@
 
                 toastr["error"]("Hiện tại chưa có tuần thi trắc nghiệm nào được mở. Vui lòng quay lại sau và tham gia thi.");
             }
+        });
+
+        $('.btn-notlogin').on('click', function () {
+            toastr.options = {
+                "closeButton": false,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": false,
+                "positionClass": "toast-top-center",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "10000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut",
+                "progressBar": true,
+            }
+
+            toastr["error"]("Vui lòng đăng nhập vào tài khoản cá nhân của bạn để tham gia tuần thi. Bạn sẽ được chuyển hướng đến trang đăng nhập sau ít giây nữa.");
+
+            setTimeout(function () {
+                window.location.href="/login";
+            }, 9000);
         });
     </script>
 </body>
