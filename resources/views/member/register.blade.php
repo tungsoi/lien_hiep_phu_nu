@@ -5,6 +5,12 @@
     .option-hide {
         display: none;
     }
+    .content-right {
+        display: block !important;
+    }
+    #wizard_container {
+        margin: 0 auto;
+    }
 </style>
 @endsection
 
