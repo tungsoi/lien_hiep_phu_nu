@@ -46,7 +46,7 @@ class FetchPrizeOnWeek extends Command
 
             echo "-------------------\n";
             echo "- Get current week \n";
-            if (!is_null($week) && $week->date_end < date('Y-m-d H:i:s', strtotime(now())))
+            if (!is_null($week) && $week->date_end > date('Y-m-d H:i:s', strtotime(now()))) // run change > to <
             {
                 echo "- Handing prizes... \n";
                 //  --> Xử lý dữ liệu trả lời của tuần hiện tại
@@ -90,7 +90,7 @@ class FetchPrizeOnWeek extends Command
                     $data_final = [];
                     $flag = 0;
                     foreach ($list_unique as $key => $row) {
-                        if ($flag < 11) {
+                        if ($flag < $prizes->count()) {
                             $data_final[] = $row[0]->id;
                         }
                         $flag++;
@@ -130,12 +130,12 @@ class FetchPrizeOnWeek extends Command
                     ];
 
                     echo "- $email_key - Sending email to $member_email \n";
-                    Mail::send($email['view'], [
-                        'member_email' => $member_email,
-                        'emailContent' => $email['content']
-                    ], function($m) use ($member_email, $email) {
-                        $m->to($member_email, 'Khách hàng tham gia dự thi')->subject($email['subject']);
-                    });
+                    // Mail::send($email['view'], [
+                    //     'member_email' => $member_email,
+                    //     'emailContent' => $email['content']
+                    // ], function($m) use ($member_email, $email) {
+                    //     $m->to($member_email, 'Khách hàng tham gia dự thi')->subject($email['subject']);
+                    // });
                 }
             }
             return true;

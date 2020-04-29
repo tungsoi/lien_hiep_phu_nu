@@ -58,7 +58,8 @@ class Week extends Model
      * @return int
      */
     public static function countNumberUserCorrect($weekId) {
-        return MemberExam::where('week_id', $weekId)->where('result', 1)->count();
+        $data = MemberExam::where('week_id', $weekId)->where('result', 1)->get();
+        return $data->groupBy('user_id')->count();
     }
 
     public function prizes() {

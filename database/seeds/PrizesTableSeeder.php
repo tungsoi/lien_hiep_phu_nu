@@ -15,24 +15,19 @@ class PrizesTableSeeder extends Seeder
         Prize::truncate();
         $arr = [
             [
-                'content'   =>  'Trị giá 5.000.000 VND',
+                'content'   =>  'Trị giá 500.000 VND',
                 'level'     =>  1,
                 'number'    =>  1
             ],
             [
-                'content'   =>  'Trị giá 3.000.000 VND',
+                'content'   =>  'Trị giá 300.000 VND',
                 'level'     =>  2,
                 'number'    =>  2
             ],
             [
-                'content'   =>  'Trị giá 2.000.000 VND',
+                'content'   =>  'Trị giá 200.000 VND',
                 'level'     =>  3,
                 'number'    =>  3
-            ],
-            [
-                'content'   =>  'Trị giá 1.000.000 VND',
-                'level'     =>  4,
-                'number'    =>  5
             ]
         ];
 

@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\Export\Answers;
 use App\Http\Controllers\Controller;
 use App\Models\Answer;
 use App\Models\Question;
@@ -272,6 +273,23 @@ class WeekController extends Controller {
 EOT;
     }
 
+
+    public function scriptAnswer() {
+        $title = trans('admin.export');
+        return <<<EOT
+        $( document ).ready(function() {
+            $('.btn-twitter[title="{$title}"]').removeAttr('href');
+            $('.btn-twitter[title="{$title}"]').removeAttr('target');
+
+            $('.btn-twitter[title="{$title}"]').click(function (e)  {
+                e.preventDefault();
+                window.open('answers/exportAnswer', '_blank');
+            });
+        });
+
+EOT;
+    }
+
     public function answers($id, Content $content) {
         return $content
         ->header('Tuần thi trắc nghiệm')
@@ -288,6 +306,22 @@ EOT;
     {
         $grid = new Grid(new MemberExam);
         $grid->model()->where('week_id', $id)->orderBy('created_at', 'desc');
+
+        $grid->filter(function($filter) {
+            $filter->expand();
+            $filter->disableIdFilter();
+            $filter->where(function ($query) {
+                $input = $this->input;
+                $user = User::where('name', 'like', '%'.$input.'%')->first();
+
+                if ($user) {
+                    $query->where('user_id', $user->id);
+                }
+
+            }, 'Tên khách hàng');
+            $filter->equal('result', 'Kết quả')->select([1 => 'Đúng', 0 => 'Sai']);
+        });
+
         $grid->header(function ($query) use ($id) {
             $week = Week::find($id);
             $number = Week::countNumberUserCorrect($id);
@@ -298,6 +332,7 @@ EOT;
             return $this->member->name ?? "Đang cập nhật";
         });
         $grid->answer('Câu trả lời')->display(function() {
+            return null;
             if (!is_null($this->answer)) {
 
                 $answer = json_decode($this->answer);
@@ -330,14 +365,18 @@ EOT;
         });
         $grid->result('Kết quả')->display(function () {
             return $this->result == 1 ? "<span class='label label-success'>Đúng</span>" : "<span class='label label-danger'>Sai</span>";
-        })->filter([
-            0 => 'Sai',
-            1 => 'Đúng',
-        ]);
+        });
         $grid->people_number('Dự đoán số người trả lời đúng')->display(function () {
             return number_format(str_replace(',', '', $this->people_number));
         });
+
+        $grid->created_at('Thời gian trả lời')->display(function () {
+            return date('H:i - d/m/Y', strtotime($this->created_at));
+        });
         $grid->disableCreateButton();
+        $grid->disableExport(false);
+        Admin::script($this->scriptAnswer());
+
         $grid->actions(function ($grid) {
             $grid->disableView();
             $grid->disableEdit();
@@ -360,6 +399,12 @@ EOT;
     }
 
     public function export() {
+        return Excel::download(new WeeksExport, $this->fileExportName);
+    }
+
+
+    public function exportAnswer(Request $request) {
+        dd($request->all());
         return Excel::download(new WeeksExport, $this->fileExportName);
     }
 
@@ -397,9 +442,30 @@ EOT;
         });
         $grid->column('member', 'Khách hàng')->display(function () {
             $exam = MemberExam::find($this->member_exam_id);
-            if (!is_null($exam)) {
+            if (!is_null($exam) && $exam->member) {
                 $route = route('members.show', $exam->member->id);
                 return "<a href=".$route." target='_blank'>".$exam->member->name."</a>";
+            }
+            return null;
+        });
+        $grid->column('mobile', 'Số điện thoại')->display(function () {
+            $exam = MemberExam::find($this->member_exam_id);
+            if (!is_null($exam) && $exam->member) {
+                return $exam->member->mobile;
+            }
+            return null;
+        });
+        $grid->column('email', 'Email')->display(function () {
+            $exam = MemberExam::find($this->member_exam_id);
+            if (!is_null($exam) && $exam->member) {
+                return $exam->member->email;
+            }
+            return null;
+        });
+        $grid->column('people_number', 'Dự đoán')->display(function () {
+            $exam = MemberExam::find($this->member_exam_id);
+            if (!is_null($exam)) {
+                return $exam->people_number;
             }
             return null;
         });

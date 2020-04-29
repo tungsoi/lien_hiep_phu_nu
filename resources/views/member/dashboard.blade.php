@@ -37,11 +37,14 @@
 
                                         <br>
                                         <h3>* Giải thưởng cuộc thi:</h3>
-                                        <p>Mỗi tuần có 04 giải thưởng, bao gồm: </p>
-                                        <p>- 01 giải Nhất: Trị giá <b>5.000.000 đồng</b>.</p>
-                                        <p>- 02 giải Nhì: Mỗi giải trị giá <b>3.000.000 đồng</b>.</p>
-                                        <p>- 03 giải Ba: Mỗi giải trị giá <b>2.000.000 đồng</b>.</p>
-                                        <p>- 05 giải Khuyến khích: Mỗi giải trị giá <b>1.000.000 đồng</b>.</p>
+                                        <p>Mỗi tuần có 03 giải thưởng, bao gồm: </p>
+                                        <p>- 01 giải Nhất: Trị giá <b>500.000 đồng</b>.</p>
+                                        <p>- 02 giải Nhì: Mỗi giải trị giá <b>300.000 đồng</b>.</p>
+                                        <p>- 03 giải Ba: Mỗi giải trị giá <b>200.000 đồng</b>.</p>
+                                        <p>Ngoài ra ban tổ chức sẽ trao một số giải thưởng phụ khác khi kết thúc đợt thi, bao gồm:</p>
+                                        <p>- 01 Giải cho Hội Phụ nữ cấp tỉnh vận động nhiều người tham gia nhất: Trị giá <b>1.000.000 đồng</b>.</p>
+                                        <p>- 01 Giải cho người dự thi nhỏ tuối nhất: Trị giá <b>300.000 đồng</b>.</p>
+                                        <p>- 01 Giải cho người dự thi lớn tuổi nhất: Trị giá <b>200.000 đồng</b>.</p>
                                         <p><i>(Người nhận giải thưởng có trách nhiệm nộp thuế thu nhập cá nhân theo quy định)</i></p>
 
                                         <br>
