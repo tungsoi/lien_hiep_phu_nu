@@ -19,7 +19,7 @@ class HomeController extends Controller
             ->header('Dashboard')
             ->description('Description...')
             ->row(function (Row $row) {
-                $row->column(4, new InfoBox('Khách dự thi', 'users', 'aqua', route('members.index'), Member::all()->count()));
+                $row->column(4, new InfoBox('Khách dự thi', 'users', 'aqua', route('members.index'), User::where('is_member', 1)->count()));
                 $row->column(4, new InfoBox('Tuần thi trắc nghiệm', 'book', 'yellow', route('weeks.index'), Week::all()->count()));
                 $row->column(4, new InfoBox('Quản trị viên', 'shopping-cart', 'green', 'admin/auth/users', User::all()->count()));
             });

@@ -298,7 +298,6 @@ EOT;
             return $this->member->name ?? "Đang cập nhật";
         });
         $grid->answer('Câu trả lời')->display(function() {
-            return null;
             if (!is_null($this->answer)) {
 
                 $answer = json_decode($this->answer);
