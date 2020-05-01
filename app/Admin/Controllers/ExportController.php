@@ -53,7 +53,7 @@ class ExportController extends Controller implements FromCollection, WithHeading
 
             return (collect($order));
         }
-
+        return (collect([]));
     }
 
     public function headings(): array
