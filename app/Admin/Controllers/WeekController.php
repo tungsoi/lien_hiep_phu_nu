@@ -2,7 +2,7 @@
 
 namespace App\Admin\Controllers;
 
-use App\Admin\Extensions\Export\Answers;
+use App\Admin\Extensions\Export\AnswersExporter;
 use App\Http\Controllers\Controller;
 use App\Models\Answer;
 use App\Models\Question;
@@ -24,6 +24,7 @@ use App\Models\WeekPrize;
 use App\Models\Prize;
 use App\Admin\Services\WeekService;
 use App\User;
+use Illuminate\Support\Str;
 
 class WeekController extends Controller {
     use HasResourceActions;
@@ -276,15 +277,17 @@ EOT;
 
     public function scriptAnswer() {
         $title = trans('admin.export');
+        $route = route('weeks.exportAnswer');
         return <<<EOT
         $( document ).ready(function() {
-            $('.btn-twitter[title="{$title}"]').removeAttr('href');
-            $('.btn-twitter[title="{$title}"]').removeAttr('target');
 
-            $('.btn-twitter[title="{$title}"]').click(function (e)  {
-                e.preventDefault();
-                window.open('answers/exportAnswer', '_blank');
-            });
+           $('.btn-export').on('click', function () {
+                let user_name = $('input[name="user_name"]').val();
+                let result = $('select').val();
+                let week_id = $('#week_id').val();
+
+                window.open('{$route}?user_name='+user_name+'&result='+result+'&week_id='+week_id, '_blank');
+           });
         });
 
 EOT;
@@ -318,7 +321,7 @@ EOT;
                     $query->where('user_id', $user->id);
                 }
 
-            }, 'Tên khách hàng');
+            },'Tên khách hàng', 'user_name');
             $filter->equal('result', 'Kết quả')->select([1 => 'Đúng', 0 => 'Sai']);
         });
 
@@ -326,39 +329,41 @@ EOT;
             $week = Week::find($id);
             $number = Week::countNumberUserCorrect($id);
             return '<label> *'.$week->name.' : '.date('H:i - d/m/Y', strtotime($week->date_start)) .' đến '. date('H:i - d/m/Y', strtotime($week->date_end)).'</label>'.
-                '<br><i style="color: red">*Số người trả lời đúng câu hỏi : <label> '.$number.'</label></i>';
+                '<br><i style="color: red">*Số người trả lời đúng câu hỏi : <label> '.$number.'</label></i> <input type="hidden" value='.$id.' id="week_id" >';
         });
         $grid->column('member_name', 'Tên')->display(function () {
             return $this->member->name ?? "Đang cập nhật";
         });
         $grid->answer('Câu trả lời')->display(function() {
-
             if (!is_null($this->answer)) {
-
                 $answer = json_decode($this->answer);
-                $html = "";
-                $key_ques = 1;
-                foreach ($answer as $key => $element) {
-                    $question_id = str_replace("question_id_", "", $key);
-                    $question = Question::find($question_id);
-                    $arr_answers = explode(',', $element);
-                    unset($arr_answers[sizeof($arr_answers)-1]);
+                if (!is_null($answer)) {
+                    $html = "";
+                    $key_ques = 1;
+                    foreach ($answer as $key => $element) {
+                        $question_id = str_replace("question_id_", "", $key);
+                        $question = Question::find($question_id);
+                        $arr_answers = explode(',', $element);
+                        unset($arr_answers[sizeof($arr_answers)-1]);
 
-                    $all_answers = Question::getArrAnswer($question_id);
-                    $char = [];
-                    if (sizeof($arr_answers) > 0) {
-                        foreach ($arr_answers as $row) {
-                            $key = array_search((int) $row, $all_answers);
-                            $char[] = Question::getArrayString($key);
+                        $all_answers = Question::getArrAnswer($question_id);
+                        $char = [];
+                        if (sizeof($arr_answers) > 0) {
+                            foreach ($arr_answers as $row) {
+                                $key = array_search((int) $row, $all_answers);
+                                $char[] = Question::getArrayString($key);
+                            }
                         }
+
+                        $char_str = implode(', ', $char);
+
+                        $html .= "Câu hỏi: ".$key_ques." - Đáp án: $char_str<br>";
+                        $key_ques++;
                     }
-
-                    $char_str = implode(', ', $char);
-
-                    $html .= "Câu hỏi: ".$key_ques." - Đáp án: $char_str<br>";
-                    $key_ques++;
+                    return $html;
                 }
-                return $html;
+
+                return "Đang cập nhật";
             }
 
             return null;
@@ -374,7 +379,6 @@ EOT;
             return date('H:i - d/m/Y', strtotime($this->created_at));
         });
         $grid->disableCreateButton();
-        $grid->disableExport(false);
         Admin::script($this->scriptAnswer());
 
         $grid->actions(function ($grid) {
@@ -384,7 +388,8 @@ EOT;
 
         $grid->tools(function (Grid\Tools $tools) {
             // Add a button, the argument can be a string, or an instance of the object that implements the Renderable or Htmlable interface
-            $tools->append('<a class="btn btn-xs btn-warning" onClick="window.history.back();">Quay lại</a>');
+            $tools->append('<a class="btn btn-xs btn-success btn-export"><i class="fa fa-file-excel-o"></i> &nbsp; Xuất excel</a>');
+            $tools->append('<a class="btn btn-xs btn-warning" onClick="window.history.back();"><i class="fa fa-arrow-left"></i> &nbsp; Quay lại</a>');
         });
 
         return $grid;
@@ -404,8 +409,12 @@ EOT;
 
 
     public function exportAnswer(Request $request) {
-        dd($request->all());
-        return Excel::download(new WeeksExport, $this->fileExportName);
+        $data = $request->all();
+        if (isset($data['week_id']) && $data['week_id'] != "") {
+            $week = Week::find($data['week_id']);
+            $week_name = Str::slug($week->name);
+            return Excel::download(new ExportController($data), 'danh-sach-cau-tra-loi-tuan-'.$week_name.'.xlsx');
+        }
     }
 
     public function prizes($id, Content $content) {
