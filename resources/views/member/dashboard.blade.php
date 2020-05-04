@@ -31,7 +31,7 @@
                                         <h1>Cuộc thi trắc nghiệm "Tìm hiểu 90 năm lịch sử Hội LHPN Việt Nam”</h1>
                                         <br>
                                         <h3>* Mục đích cuộc thi:</h3>
-                                        <p>- Hướng tới kỷ niệm 90 năm ngày thành lập Hội LHPN Việt Nam, (20/10/1930 - 20/10/2020), góp phần tuyên truyền cho thế hệ trẻ và toàn thể nhân dân về vai trò của Phụ nữ và đóng góp của Hội trong 90 năm qua.</p>
+                                        <p>- Hướng tới kỷ niệm 90 năm ngày thành lập Hội LHPN Việt Nam, (1930 - 2020), góp phần tuyên truyền cho thế hệ trẻ và toàn thể nhân dân về vai trò của Phụ nữ và đóng góp của Hội trong 90 năm qua.</p>
                                         <p>- Tiếp tục phát huy truyền thống lịch sử và những bài học kinh nghiệm quý báu của phong trào phụ nữ được hun đúc nên từ truyền thống cách mạng vẻ vang; vận dụng linh hoạt, sáng tạo, hiệu quả vào công cuộc đổi mới, hội nhập quốc tế hiện nay.</p>
                                         <p>- Biểu dương, khen thưởng các cá nhân trả lời đúng và đầy đủ các tuần.</p>
 
@@ -46,6 +46,15 @@
                                         <p>- 01 Giải cho người dự thi nhỏ tuối nhất: Trị giá <b>300.000 đồng</b>.</p>
                                         <p>- 01 Giải cho người dự thi lớn tuổi nhất: Trị giá <b>200.000 đồng</b>.</p>
                                         {{-- <p><i>(Người nhận giải thưởng có trách nhiệm nộp thuế thu nhập cá nhân theo quy định)</i></p> --}}
+
+                                        <br>
+                                        <h3>* NHỮNG ĐIỂM CẦN LƯU Ý KHI THAM GIA DỰ THI:</h3>
+                                        <p>- Thời gian thi: 10h00 Thứ Hai tuần trước – 9h00 Thứ Hai tuần tiếp theo.</p>
+                                        <p>- Mỗi người có thể dự thi nhiều lần/tuần, tuy nhiên chỉ được công nhận 01 kết quả đúng nhất trong số các lần dự thi.</p>
+                                        <p>- Trong trường hợp nhiều người cùng trả lời đúng tất cả các đáp án, người trả lời sớm nhất sẽ được nhận giải.</p>
+                                        <p>- Người trúng giải nếu không cung cấp thông tin cá nhân đúng thực tế sẽ không được nhận giải thưởng. Khi đó, giải thưởng sẽ chuyển cho người tiếp theo trả lời đúng các câu hỏi.</p>
+                                        <p>- Kết quả thi trắc nghiệm hằng tuần sẽ được công bố cập nhật ngay sau khi có kết quả thi tuần (chậm nhất là 12h thứ hai hằng tuần) trên Cổng Thông tin điện tử Hội LHPN Việt Nam và Báo Phụ nữ Việt Nam.</p>
+                                        <p>- Thể lệ cụ thể đọc và tải tại đường link: <a href="https://bit.ly/2KYKx1g">https://bit.ly/2KYKx1g</a> </p>
 
                                         <br>
                                         <h2>* Tuần thi đang diễn ra: {{ $week->name ?? "Chưa mở tuần thi"}}</h2>
