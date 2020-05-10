@@ -54,7 +54,7 @@
                                         <p>- Trong trường hợp nhiều người cùng trả lời đúng tất cả các đáp án, người trả lời sớm nhất sẽ được nhận giải.</p>
                                         <p>- Người trúng giải nếu không cung cấp thông tin cá nhân đúng thực tế sẽ không được nhận giải thưởng. Khi đó, giải thưởng sẽ chuyển cho người tiếp theo trả lời đúng các câu hỏi.</p>
                                         <p>- Kết quả thi trắc nghiệm hằng tuần sẽ được công bố cập nhật ngay sau khi có kết quả thi tuần (chậm nhất là 12h thứ hai hằng tuần) trên Cổng Thông tin điện tử Hội LHPN Việt Nam và Báo Phụ nữ Việt Nam.</p>
-                                        <p>- Thể lệ cụ thể đọc và tải tại đường link: <a href="https://bit.ly/2KYKx1g">https://bit.ly/2KYKx1g</a> </p>
+                                        <p>- <a href="http://hoilhpn.org.vn/documents/246915/2429482/The+le+cuoc+thi+online+90+nam+Hoi.pdf/3837e28c-2030-496d-bc5a-7de5c89f5b41" target="_blank"><b>Tải file thể lệ đầy đủ</b></a> </p>
 
                                         <br>
                                         <h2>* Tuần thi đang diễn ra: {{ $week->name ?? "Chưa mở tuần thi"}}</h2>

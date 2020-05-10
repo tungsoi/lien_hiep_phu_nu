@@ -278,6 +278,7 @@ EOT;
     public function scriptAnswer() {
         $title = trans('admin.export');
         $route = route('weeks.exportAnswer');
+        $route_member = route('weeks.exportMemberInWeek');
         return <<<EOT
         $( document ).ready(function() {
 
@@ -288,6 +289,12 @@ EOT;
 
                 window.open('{$route}?user_name='+user_name+'&result='+result+'&week_id='+week_id, '_blank');
            });
+
+            $('.btn-export-member-in-week').on('click', function () {
+                let week_id = $('#week_id').val();
+
+                window.open('{$route_member}'+'?week_id='+week_id, '_blank');
+            });
         });
 
 EOT;
@@ -388,6 +395,7 @@ EOT;
 
         $grid->tools(function (Grid\Tools $tools) {
             // Add a button, the argument can be a string, or an instance of the object that implements the Renderable or Htmlable interface
+            $tools->append('<a class="btn btn-xs btn-success btn-info btn-export-member-in-week"><i class="fa fa-user"></i> &nbsp; Xuất danh sách khách dự thi trong tuần</a>');
             $tools->append('<a class="btn btn-xs btn-success btn-export"><i class="fa fa-file-excel-o"></i> &nbsp; Xuất excel</a>');
             $tools->append('<a class="btn btn-xs btn-warning" onClick="window.history.back();"><i class="fa fa-arrow-left"></i> &nbsp; Quay lại</a>');
         });
@@ -414,6 +422,15 @@ EOT;
             $week = Week::find($data['week_id']);
             $week_name = Str::slug($week->name);
             return Excel::download(new ExportController($data), 'danh-sach-cau-tra-loi-tuan-'.$week_name.'.xlsx');
+        }
+    }
+
+    public function exportMemberInWeek(Request $request) {
+        $data = $request->all();
+        if (isset($data['week_id']) && $data['week_id'] != "") {
+            $week = Week::find($data['week_id']);
+            $week_name = Str::slug($week->name);
+            return Excel::download(new ExportMemberController($data), 'danh-sach-khach-du-thi-tuan-'.$week_name.'.xlsx');
         }
     }
 

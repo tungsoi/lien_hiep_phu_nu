@@ -41,12 +41,12 @@
                     @endif
                 </div>
 
-                <div class="form-group{{ isset($errors) && $errors->has('email') ? ' has-error' : '' }}">
+                {{-- <div class="form-group{{ isset($errors) && $errors->has('email') ? ' has-error' : '' }}">
                     <input id="email" type="text" class="form-control" name="email" value="{{ old('email') }}"  autofocus placeholder="{{ trans('admin.email') }}">
                     @if (isset($errors) && $errors->has('email'))
                         <label id="email-error" class="error" for="mobile">{{ $errors->first('email') }}</label>
                     @endif
-                </div>
+                </div> --}}
 
                 <div class="form-group{{ isset($errors) && $errors->has('gender') ? ' has-error' : '' }}">
                     <select name="gender" id="" class="form-control">

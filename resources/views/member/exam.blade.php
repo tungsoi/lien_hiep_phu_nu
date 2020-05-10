@@ -75,17 +75,19 @@
     <script>
         $('.answer-item').click(function () {
             let answer_id = $(this).attr('data-id');
-            let value = $(this).parent().find('input[type="hidden"].answer_correct').val();
+            // let value = $(this).parent().find('input[type="hidden"].answer_correct').val();
+            $(this).parent().children().removeClass('answer-active');
+            $(this).parent().find('input[type="hidden"].answer_correct').val("");
+            $(this).addClass('answer-active');
+            // if ($(this).hasClass('answer-active')) {
+            //     $(this).removeClass('answer-active');
+            //     value = value.replace(answer_id+",", "");
+            // } else {
+            //     $(this).addClass('answer-active');
+            //     value += $(this).attr('data-id')+",";
+            // }
 
-            if ($(this).hasClass('answer-active')) {
-                $(this).removeClass('answer-active');
-                value = value.replace(answer_id+",", "");
-            } else {
-                $(this).addClass('answer-active');
-                value += $(this).attr('data-id')+",";
-            }
-
-            $(this).parent().find('input[type="hidden"].answer_correct').val(value);
+            $(this).parent().find('input[type="hidden"].answer_correct').val(answer_id+",");
         });
 
         $('input[name="people_number"]').maskNumber({

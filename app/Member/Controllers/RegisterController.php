@@ -58,6 +58,7 @@ class RegisterController extends Controller
             }
 
             // Create record
+            $data['email'] = $data['mobile']."_".strtotime(now())."_guest@gmail.com";
             $data['password']   =   bcrypt($data['password']);
             $data['is_member'] = 1;
             $user = User::create($data);
@@ -88,9 +89,9 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name'           => 'required|min:6',
             'mobile'         => 'required|unique:admin_users,mobile',
-            'email'          => [
-                'required', 'email', 'unique:admin_users,email'
-            ],
+            // 'email'          => [
+            //     'required', 'email', 'unique:admin_users,email'
+            // ],
             'password'       => 'min:6|confirmed',
             'birthday'  =>  'required',
             'gender'        =>  'required',
@@ -102,9 +103,9 @@ class RegisterController extends Controller
             'name.min'              => 'Họ và tên tối thiểu 6 ký tự',
             'mobile.required'       => trans('validation.required'),
             'mobile.unique'         => 'Số điện thoại đã được sử dụng',
-            'email.required'        => trans('validation.required'),
-            'email.unique'          => 'Email đã được sử dụng',
-            'email.email'           => trans('validation.email.email'),
+            // 'email.required'        => trans('validation.required'),
+            // 'email.unique'          => 'Email đã được sử dụng',
+            // 'email.email'           => trans('validation.email.email'),
             'password.confirmed'    => trans('validation.password.confirmed'),
             'birthday.required'         => trans('validation.required'),
             'gender.required'         => trans('validation.required'),

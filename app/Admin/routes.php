@@ -38,6 +38,7 @@ Route::group([
     $router->get('weeks/{id}/prizes', 'WeekController@prizes')->name('weeks.prizes');
     $router->get('weeks/export', 'WeekController@export')->name('weeks.export');
     $router->get('weeks/exportAnswer', 'WeekController@exportAnswer')->name('weeks.exportAnswer');
+    $router->get('weeks/exportMemberInWeek', 'WeekController@exportMemberInWeek')->name('weeks.exportMemberInWeek');
 
     $router->resources([
         'weeks' =>  'WeekController',
