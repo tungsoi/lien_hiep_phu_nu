@@ -43,7 +43,12 @@ class MemberController extends Controller
         $grid->model()->where('is_member', 1);
         $grid->name(trans('admin.name'))->editable();
         $grid->mobile(trans('admin.mobile'));
-        $grid->email(trans('admin.email'));
+        $grid->email(trans('admin.email'))->display(function ($email) {
+            if (strpos($email, '_guest@gmail.com')) {
+                return null;
+            }
+            return $email;
+        });
         $grid->birthday(trans('admin.birthday'));
         $grid->gender(trans('admin.gender'))->display(function ($gender) {
             switch($gender) {

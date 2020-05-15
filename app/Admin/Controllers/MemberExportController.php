@@ -25,10 +25,16 @@ class MemberExportController extends Controller implements FromCollection, WithH
         if ($orders->count() > 0) {
             $key = 1;
             foreach ($orders as $row) {
+                if (strpos($row->email, '_guest@gmail.com')) {
+                    $stremail = null;
+                } else {
+                    $stremail = $row->email;
+                }
+
                 $order[] = array(
                     '0' => $key,
                     '1' => $row->name,
-                    '2' => $row->email,
+                    '2' => $stremail,
                     '3' => $row->mobile,
                     '4' => $row->gender == 1 ? "Nam" : "Nữ",
                     '5' => $row->birthday,
