@@ -11,6 +11,8 @@ use Brazzer\Admin\Grid;
 use Brazzer\Admin\Layout\Content;
 use Brazzer\Admin\Show;
 use App\User;
+use Brazzer\Admin\Facades\Admin;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MemberController extends Controller
 {
@@ -62,7 +64,26 @@ class MemberController extends Controller
             return date('H:i - d/m/Y', strtotime($created_at));
         });
 
+        $grid->tools(function (Grid\Tools $tools) {
+            $tools->append('<a class="btn btn-xs btn-success btn-export"><i class="fa fa-file-excel-o"></i> &nbsp; Xuất excel</a>');
+        });
+
+        Admin::script($this->script());
+
         return $grid;
+    }
+
+    public function script() {
+        $route = route('members.export');
+        return <<<EOT
+        $( document ).ready(function() {
+
+            $('.btn-export').on('click', function () {
+                window.open('{$route}', '_blank');
+            });
+        });
+
+EOT;
     }
 
     /**
@@ -172,5 +193,10 @@ class MemberController extends Controller
             $footer->disableCreatingCheck();
         });
         return $form;
+    }
+
+
+    public function export() {
+        return Excel::download(new MemberExportController(), 'danh-sach-khach-du-thi.xlsx');
     }
 }
