@@ -73,6 +73,12 @@ class MemberController extends Controller
             $tools->append('<a class="btn btn-xs btn-success btn-export"><i class="fa fa-file-excel-o"></i> &nbsp; Xuất excel</a>');
         });
 
+        $grid->filter(function($filter) {
+            $filter->expand();
+            $filter->disableIdFilter();
+            $filter->like('mobile', trans('admin.mobile'));
+        });
+
         Admin::script($this->script());
 
         return $grid;
