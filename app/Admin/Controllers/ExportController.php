@@ -40,16 +40,21 @@ class ExportController extends Controller implements FromCollection, WithHeading
         $orders->orderBy('created_at', 'asc');
 
         if ($orders->count() > 0) {
-            foreach ($orders->get() as $key => $row) {
-                $order[] = array(
-                    '0' => $key+1,
-                    '1' => $row->member->name ?? "Đang cập nhật",
-                    '2' => $this->fetchAnswer($row->answer),
-                    '3' => $row->result == 1 ? "Đúng" : "Sai",
-                    '4' => $row->people_number,
-                    '5' => date('H:i - d/m/Y', strtotime($row->created_at))
-                );
-            }
+
+            $order = [];
+            $orders->chunk(1000, function ($rows) use ($order) {
+
+                foreach ($rows as $key => $row) {
+                    $order[] = array(
+                        '0' => $key+1,
+                        '1' => $row->member->name ?? "Đang cập nhật",
+                        '2' => $this->fetchAnswer($row->answer),
+                        '3' => $row->result == 1 ? "Đúng" : "Sai",
+                        '4' => $row->people_number,
+                        '5' => date('H:i - d/m/Y', strtotime($row->created_at))
+                    );
+                }
+            });
 
             return (collect($order));
         }
