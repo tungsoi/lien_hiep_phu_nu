@@ -482,10 +482,6 @@ EOT;
             return null;
         });
         $grid->column('email', 'Email')->display(function () {
-            $exam = MemberExam::find($this->member_exam_id);
-            if (!is_null($exam) && $exam->member) {
-                return $exam->member->email;
-            }
             return null;
         });
         $grid->column('people_number', 'Dự đoán')->display(function () {
