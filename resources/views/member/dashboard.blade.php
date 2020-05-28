@@ -4,9 +4,9 @@
     @include ('member.header')
 
     <link rel="stylesheet" href="{{ asset('asset/css/dashboard.css') }}">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ asset('asset/css/bootstrap3.min.css') }}">
     <link rel="stylesheet" href="{{ asset('asset/css/custom.css') }}">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="{{ asset('asset/css/toastr.min.css') }}">
 
     <style>
         .toast-top-center, .toast-top-right {
@@ -76,9 +76,9 @@
         </div>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{{ asset('asset/js/jquery34.min.js') }}"></script>
+    <script src="{{ asset('asset/js/bootstrap3.min.js') }}"></script>
+    <script src="{{ asset('asset/js/toastr.min.js')}}"></script>
 
     @if (session()->has('send-exam'))
         <script>
