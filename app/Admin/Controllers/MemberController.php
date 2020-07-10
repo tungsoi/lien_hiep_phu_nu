@@ -79,6 +79,8 @@ class MemberController extends Controller
             $filter->like('mobile', trans('admin.mobile'));
         });
 
+        $grid->paginate(10);
+
         Admin::script($this->script());
 
         return $grid;

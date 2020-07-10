@@ -113,12 +113,12 @@ class WeekController extends Controller {
                 case 2: return '<span class="label label-danger">'.trans('admin.stop').'</span>';
             }
         });
-        $grid->column('number_answers', 'Số lượt trả lời')->display(function () {
-            return $this->memberExam->count();
-        })->label('primary');
-        $grid->column('people_correct', 'SNTLD')->display(function () {
-            return $this->countNumberUserCorrect($this->id);
-        })->label('success');
+        // $grid->column('number_answers', 'Số lượt trả lời')->display(function () {
+        //     return $this->memberExam->count();
+        // })->label('primary');
+        // $grid->column('people_correct', 'SNTLD')->display(function () {
+        //     return $this->countNumberUserCorrect($this->id);
+        // })->label('success');
         $grid->disableExport(false);
         $grid->actions(function ($grid) {
             $route = route('weeks.answers', $grid->getKey());
